@@ -1,0 +1,171 @@
+{% extends 'base.html' %}
+
+{% block title %}
+Invoices
+{% endblock %}
+
+
+{% block content %}
+
+<div class="kusi-wrapper">
+    <div class="kusi-dashboard">
+
+        <!-- PAGE HEADING -->
+        <div class="page-header">
+            <div>
+                <div class="page-tag">Billing Records</div>
+                <h1 class="page-title">Invoices</h1>
+            </div>
+
+            <a
+                href="{% url 'create_invoice' %}"
+                class="btn-kusi btn-kusi-primary"
+            >
+                <i class="bi bi-plus-lg"></i>
+                Create Invoice
+            </a>
+        </div>
+
+
+        <!-- Messages -->
+        {% if messages %}
+
+            {% for message in messages %}
+
+                <div class="kusi-alert {{ message.tags }}">
+                    {{ message }}
+                </div>
+
+            {% endfor %}
+
+        {% endif %}
+
+
+        <!-- Invoice Table -->
+        <div class="section-label">Invoice Records</div>
+
+        <div class="kusi-card">
+
+            <div class="kusi-card-header">
+
+                <h5 class="kusi-card-title">
+                    All Invoices
+                </h5>
+
+                <span class="kusi-badge">
+                    {{ invoices|length }} Invoice{{ invoices|length|pluralize }}
+                </span>
+
+            </div>
+
+
+            <div>
+
+                {% if invoices %}
+
+                    <div class="table-responsive">
+
+                        <table>
+
+                            <thead>
+
+                                <tr>
+                                    <th>Invoice No.</th>
+                                    <th>Date</th>
+                                    <th>Company</th>
+                                    <th>Phone No.</th>
+                                    <th class="text-end">Grand Total</th>
+                                    <th class="text-center">Actions</th>
+                                </tr>
+
+                            </thead>
+
+
+                            <tbody>
+
+                                {% for invoice in invoices %}
+
+                                <tr>
+
+                                    <td>
+                                        <strong>{{ invoice.invoice_no }}</strong>
+                                    </td>
+
+                                    <td style="color:var(--gray)">
+                                        {{ invoice.date|date:"d M Y" }}
+                                    </td>
+
+                                    <td>
+                                        {{ invoice.company_name }}
+                                    </td>
+
+                                    <td style="color:var(--gray)">
+                                        {{ invoice.phone_no|default:"-" }}
+                                    </td>
+
+                                    <td class="text-end grand-total-cell">
+                                        <strong>{{ invoice.grand_total|floatformat:2 }}</strong>
+                                    </td>
+
+                                    <td class="text-center">
+
+                                        <a
+                                            href="{% url 'invoice_detail' invoice.pk %}"
+                                            class="icon-btn view"
+                                            title="View Invoice"
+                                        >
+                                            <i class="bi bi-eye"></i>
+                                        </a>
+
+                                        <a
+                                            href="{% url 'invoice_detail' invoice.pk %}"
+                                            class="icon-btn print"
+                                            title="Print Invoice"
+                                        >
+                                            <i class="bi bi-printer"></i>
+                                        </a>
+
+                                    </td>
+
+                                </tr>
+
+                                {% endfor %}
+
+                            </tbody>
+
+                        </table>
+
+                    </div>
+
+                {% else %}
+
+                    <!-- Empty State -->
+
+                    <div class="empty-state">
+
+                        <div class="empty-icon">🧾</div>
+
+                        <h5>No invoices found</h5>
+
+                        <p>You have not created any invoices yet.</p>
+
+                        <a
+                            href="{% url 'create_invoice' %}"
+                            class="btn-kusi btn-kusi-primary"
+                        >
+                            <i class="bi bi-plus-lg"></i>
+                            Create Your First Invoice
+                        </a>
+
+                    </div>
+
+                {% endif %}
+
+            </div>
+
+        </div>
+
+    </div> <!-- Close kusi-dashboard -->
+</div> <!-- Close kusi-wrapper -->
+
+{% endblock %}

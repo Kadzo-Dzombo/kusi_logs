@@ -1,0 +1,322 @@
+{% extends 'base.html' %}
+
+{% block content %}
+
+<!-- Google Fonts for Kusi Theme -->
+<link href="https://fonts.googleapis.com/css2?family=Barlow+Condensed:wght@400;600;700;800;900&family=Barlow:wght@300;400;500&display=swap" rel="stylesheet" />
+
+<style>
+    /* Scoped Theme Variables & Base Styles */
+    .kusi-wrapper {
+        --navy: #0a1628;
+        --steel: #1b2e4b;
+        --orange: #e8640a;
+        --orange-light: #ff7c22;
+        --white: #ffffff;
+        --gray: #b8cfe0;
+        --success: #22c55e;
+        --warning: #f59e0b;
+        --danger: #ef4444;
+        --blue: #3b82f6;
+
+        display: flex;
+        gap: 20px;
+        min-height: calc(100vh - 40px);
+        align-items: stretch;
+    }
+
+    .kusi-wrapper * {
+        box-sizing: border-box;
+    }
+
+    .kusi-dashboard {
+        flex: 1;
+        font-family: 'Barlow', sans-serif;
+        background: var(--navy);
+        color: var(--white);
+        padding: 40px;
+        border-radius: 8px;
+        overflow: hidden;
+    }
+
+    /* HEADER */
+    .kusi-dashboard .page-header {
+        display: flex;
+        justify-content: space-between;
+        align-items: flex-end;
+        margin-bottom: 40px;
+        padding-bottom: 24px;
+        border-bottom: 1px solid rgba(255,255,255,0.08);
+    }
+    .kusi-dashboard .page-tag {
+        font-family: 'Barlow Condensed', sans-serif;
+        font-size: 16px;
+        letter-spacing: 4px;
+        text-transform: uppercase;
+        color: var(--orange);
+        margin-bottom: 8px;
+    }
+    .kusi-dashboard .page-title {
+        font-family: 'Barlow Condensed', sans-serif;
+        font-size: 42px;
+        font-weight: 900;
+        text-transform: uppercase;
+        line-height: 1;
+        margin: 0;
+    }
+
+    /* SECTION LABEL */
+    .kusi-dashboard .section-label {
+        font-family: 'Barlow Condensed', sans-serif;
+        font-size: 12px;
+        letter-spacing: 4px;
+        text-transform: uppercase;
+        color: var(--orange);
+        display: flex;
+        align-items: center;
+        gap: 12px;
+        margin-bottom: 16px;
+    }
+    .kusi-dashboard .section-label::after {
+        content: '';
+        flex: 1;
+        height: 1px;
+        background: rgba(232,100,10,0.2);
+    }
+
+    /* CARD */
+    .kusi-dashboard .kusi-card {
+        background: var(--steel);
+        border-top: 3px solid var(--orange);
+        border-radius: 6px;
+        overflow: hidden;
+    }
+
+    /* TABLE */
+    .kusi-dashboard table {
+        width: 100%;
+        border-collapse: collapse;
+    }
+    .kusi-dashboard thead th {
+        font-family: 'Barlow Condensed', sans-serif;
+        font-size: 12px;
+        letter-spacing: 2.5px;
+        text-transform: uppercase;
+        color: #d0e4f0;
+        padding: 16px 24px;
+        text-align: left;
+        font-weight: 700;
+        border-bottom: 1px solid rgba(255,255,255,0.1);
+    }
+    .kusi-dashboard tbody tr {
+        border-bottom: 1px solid rgba(255,255,255,0.05);
+        transition: background 0.15s;
+    }
+    .kusi-dashboard tbody tr:hover {
+        background: rgba(255,255,255,0.03);
+    }
+    .kusi-dashboard td {
+        padding: 16px 24px;
+        font-size: 15px;
+        vertical-align: middle;
+        color: #eaf2f8;
+    }
+    .kusi-dashboard td a.ref-link {
+        color: var(--orange-light);
+        text-decoration: none;
+        font-family: 'Barlow Condensed', sans-serif;
+        font-weight: 700;
+        font-size: 17px;
+        letter-spacing: 0.3px;
+    }
+    .kusi-dashboard td a.ref-link:hover {
+        text-decoration: underline;
+    }
+    .kusi-dashboard td a.yard-link {
+        color: var(--blue);
+        text-decoration: none;
+        font-size: 15px;
+    }
+    .kusi-dashboard td a.yard-link:hover {
+        text-decoration: underline;
+    }
+    .kusi-dashboard .empty-report {
+        text-align: center;
+        padding: 40px;
+        color: #b8cfe0;
+        font-size: 15px;
+    }
+
+    /* ACTION BUTTONS */
+    .kusi-dashboard .btn-kusi-sm {
+        font-family: 'Barlow Condensed', sans-serif;
+        font-weight: 700;
+        font-size: 12px;
+        letter-spacing: 1px;
+        text-transform: uppercase;
+        padding: 8px 16px;
+        cursor: pointer;
+        text-decoration: none;
+        transition: all 0.2s;
+        border-radius: 4px;
+        display: inline-flex;
+        align-items: center;
+        gap: 6px;
+        border: 1px solid transparent;
+        margin-right: 6px;
+    }
+    .kusi-dashboard .btn-kusi-view {
+        background: rgba(59,130,246,0.1);
+        border-color: var(--blue);
+        color: var(--blue);
+    }
+    .kusi-dashboard .btn-kusi-view:hover {
+        background: var(--blue);
+        color: var(--white);
+    }
+    .kusi-dashboard .btn-kusi-delete {
+        background: rgba(239,68,68,0.1);
+        border-color: var(--danger);
+        color: var(--danger);
+    }
+    .kusi-dashboard .btn-kusi-delete:hover {
+        background: var(--danger);
+        color: var(--white);
+    }
+
+    /* PRIMARY BUTTON (Add Reference) */
+    .kusi-dashboard .btn-kusi {
+        font-family: 'Barlow Condensed', sans-serif;
+        font-weight: 700;
+        font-size: 14px;
+        letter-spacing: 1.5px;
+        text-transform: uppercase;
+        padding: 12px 24px;
+        cursor: pointer;
+        text-decoration: none;
+        transition: all 0.2s;
+        border-radius: 4px;
+        display: inline-flex;
+        align-items: center;
+        gap: 8px;
+        border: 1px solid transparent;
+    }
+    .kusi-dashboard .btn-kusi-primary {
+        background: rgba(232,100,10,0.1);
+        border-color: var(--orange);
+        color: var(--orange);
+    }
+    .kusi-dashboard .btn-kusi-primary:hover {
+        background: var(--orange);
+        color: var(--white);
+    }
+
+    @media (max-width: 768px) {
+        .kusi-wrapper { flex-direction: column; }
+        .kusi-dashboard { padding: 20px; }
+        .kusi-dashboard .page-header { flex-direction: column; align-items: flex-start; gap: 12px; }
+        .kusi-dashboard table { display: block; overflow-x: auto; white-space: nowrap; }
+    }
+</style>
+
+<div class="kusi-wrapper">
+    <div class="kusi-dashboard">
+
+        <!-- PAGE HEADING -->
+        <div class="page-header">
+            <div>
+                <div class="page-tag">Reference Management</div>
+                <h1 class="page-title">References</h1>
+            </div>
+
+            <a
+                href="{% url 'create_reference' %}"
+                class="btn-kusi btn-kusi-primary">
+                <i class="bi bi-plus-lg"></i>
+                Add Reference
+            </a>
+        </div>
+
+
+        <div class="section-label">All References</div>
+
+        <div class="kusi-card">
+
+            <div class="table-responsive">
+
+                <table>
+
+                    <thead>
+                        <tr>
+                            <th>#</th>
+                            <th>Reference No.</th>
+                            <th>Yard</th>
+                            <th>Containers</th>
+                            <th>Actions</th>
+                        </tr>
+                    </thead>
+
+                    <tbody>
+
+                        {% for reference in references %}
+
+                        <tr>
+
+                            <td>{{ forloop.counter }}</td>
+
+                            <td>
+                                <a href="{% url 'reference_detail' reference.slug %}" class="ref-link">
+                                    {{ reference.reference_no }}
+                                </a>
+                            </td>
+
+                            <td>
+                                <a href="{% url 'yard_detail' reference.yard.slug %}" class="yard-link">
+                                    {{ reference.yard.name }}
+                                </a>
+                            </td>
+
+                            <td style="color:var(--gray)">
+                                {{ reference.containers.count }}
+                            </td>
+
+                            <td>
+
+                                <a
+                                    href="{% url 'reference_detail' reference.slug %}"
+                                    class="btn-kusi-sm btn-kusi-view">
+                                    View
+                                </a>
+
+                                <a
+                                    href="{% url 'delete_reference' reference.slug %}"
+                                    class="btn-kusi-sm btn-kusi-delete">
+                                    Delete
+                                </a>
+
+                            </td>
+
+                        </tr>
+
+                        {% empty %}
+
+                        <tr>
+                            <td colspan="5" class="empty-report">
+                                No references found.
+                            </td>
+                        </tr>
+
+                        {% endfor %}
+
+                    </tbody>
+
+                </table>
+
+            </div>
+
+        </div>
+
+    </div> <!-- Close kusi-dashboard -->
+</div> <!-- Close kusi-wrapper -->
+
+{% endblock %}

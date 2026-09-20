@@ -1,0 +1,1245 @@
+/* ================================================================
+   GLOBAL
+   Design tokens, site chrome, and components reused across templates.
+   ================================================================ */
+
+/* ---- Design tokens ---- */
+:root {
+    --navy: #0a1628;
+    --steel: #1b2e4b;
+    --orange: #e8640a;
+    --orange-light: #ff7c22;
+    --white: #ffffff;
+    --gray: #b8cfe0;
+    --success: #22c55e;
+    --warning: #f59e0b;
+    --danger: #ef4444;
+    --blue: #3b82f6;
+}
+
+body {
+    font-family: 'Barlow', sans-serif;
+    background-color: var(--navy);
+    color: var(--white);
+    overflow-x: hidden;
+    min-height: 100vh;
+}
+
+/* ---- Scrollbar ---- */
+::-webkit-scrollbar { width: 8px; height: 8px; }
+::-webkit-scrollbar-track { background: var(--navy); }
+::-webkit-scrollbar-thumb { background: var(--steel); border-radius: 4px; }
+::-webkit-scrollbar-thumb:hover { background: rgba(232,100,10,0.5); }
+
+/* ---- Site chrome (rendered once, from base.html) ---- */
+.sidebar {
+    width: 260px;
+    min-height: 100vh;
+    position: fixed;
+    top: 0;
+    left: 0;
+    background: var(--steel);
+    border-right: 1px solid rgba(255, 255, 255, 0.05);
+    padding: 24px 20px;
+    z-index: 1040;
+    transition: all 0.3s ease;
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+}
+.sidebar-brand {
+    font-family: 'Barlow Condensed', sans-serif;
+    font-size: 24px;
+    font-weight: 900;
+    color: var(--white);
+    text-transform: uppercase;
+    letter-spacing: 1.5px;
+    margin-bottom: 32px;
+    padding-left: 12px;
+    text-decoration: none;
+    display: flex;
+    align-items: center;
+}
+.sidebar-brand span { color: var(--orange); margin-left: 6px; }
+
+.sidebar .nav-link {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    padding: 12px 16px;
+    color: var(--gray);
+    text-decoration: none;
+    font-family: 'Barlow', sans-serif;
+    font-weight: 500;
+    font-size: 15px;
+    border-radius: 6px;
+    transition: all 0.2s ease;
+}
+.sidebar .nav-link:hover,
+.sidebar .nav-link.active {
+    background: rgba(232, 100, 10, 0.1);
+    color: var(--orange);
+}
+.sidebar .nav-link i { font-size: 18px; width: 24px; text-align: center; }
+
+.main-content {
+    margin-left: 260px;
+    min-height: 100vh;
+    padding: 40px;
+    transition: all 0.3s ease;
+}
+
+.mobile-navbar {
+    display: none;
+    background: rgba(10, 22, 40, 0.95);
+    backdrop-filter: blur(10px);
+    border-bottom: 1px solid rgba(232, 100, 10, 0.2);
+    color: var(--white);
+    align-items: center;
+    justify-content: space-between;
+    padding: 0 20px;
+    z-index: 1030;
+}
+.mobile-navbar .mobile-brand {
+    font-family: 'Barlow Condensed', sans-serif;
+    font-size: 20px;
+    font-weight: 900;
+    letter-spacing: 1px;
+    text-transform: uppercase;
+}
+.mobile-navbar .mobile-brand span { color: var(--orange); }
+
+.btn-mobile-toggle {
+    background: none;
+    border: none;
+    color: var(--white);
+    font-size: 28px;
+    padding: 0;
+    cursor: pointer;
+    transition: color 0.2s;
+}
+.btn-mobile-toggle:hover { color: var(--orange); }
+
+/* Django messages rendered via base.html */
+.kusi-alert {
+    background: var(--steel);
+    border: 1px solid rgba(255, 255, 255, 0.1);
+    border-left: 4px solid var(--orange);
+    color: var(--white);
+    font-family: 'Barlow', sans-serif;
+    border-radius: 4px;
+    box-shadow: 0 4px 12px rgba(0,0,0,0.2);
+    padding: 14px 20px;
+    font-size: 14px;
+    margin-bottom: 16px;
+}
+.kusi-alert.alert-success, 
+.kusi-alert.success { border-left-color: var(--success); background: rgba(34,197,94,0.08); }
+.kusi-alert.alert-error, 
+.kusi-alert.alert-danger, 
+.kusi-alert.error, 
+.kusi-alert.danger { border-left-color: var(--danger); background: rgba(239,68,68,0.08); }
+.kusi-alert.alert-warning, 
+.kusi-alert.warning { border-left-color: var(--warning); background: rgba(245,158,11,0.08); }
+.kusi-alert.alert-info, 
+.kusi-alert.info { border-left-color: var(--blue); background: rgba(59,130,246,0.08); }
+.kusi-alert .btn-close { filter: invert(1) grayscale(100%) brightness(200%); }
+
+@media (max-width: 991.98px) {
+    .sidebar { left: -260px; }
+    .sidebar.show { left: 0; }
+    .main-content { margin-left: 0; padding: 20px; padding-top: 90px; }
+    .mobile-navbar { display: flex; position: fixed; top: 0; left: 0; right: 0; height: 65px; }
+    .sidebar-overlay {
+        display: none;
+        position: fixed;
+        inset: 0;
+        background: rgba(10, 22, 40, 0.85);
+        backdrop-filter: blur(2px);
+        z-index: 1035;
+    }
+    .sidebar-overlay.show { display: block; }
+}
+
+/* ---- Reset for all Kusi content wrappers ---- */
+.kusi-wrapper * { box-sizing: border-box; }
+
+/* ---- Shared card component (used by every panel/card across the app) ---- */
+.kusi-card {
+    background: var(--steel);
+    border-top: 3px solid var(--orange);
+    border-radius: 6px;
+    overflow: hidden;
+    margin-bottom: 32px;
+}
+.kusi-card-header {
+    padding: 20px 28px;
+    border-bottom: 1px solid rgba(255,255,255,0.08);
+    background: rgba(255,255,255,0.02);
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+}
+.kusi-card-header h4,
+.kusi-card-title {
+    font-family: 'Barlow Condensed', sans-serif;
+    font-weight: 800;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+    font-size: 20px;
+    margin: 0;
+}
+.kusi-card-body { padding: 32px 28px; }
+
+.kusi-badge {
+    font-family: 'Barlow Condensed', sans-serif;
+    font-size: 13px;
+    font-weight: 700;
+    letter-spacing: 1px;
+    text-transform: uppercase;
+    padding: 6px 14px;
+    border-radius: 20px;
+    background: rgba(232,100,10,0.15);
+    color: var(--orange);
+}
+
+/* ---- Shared list/report table ---- */
+.kusi-dashboard table {
+    width: 100%;
+    border-collapse: collapse;
+}
+.kusi-dashboard thead th {
+    font-family: 'Barlow Condensed', sans-serif;
+    font-size: 12px;
+    letter-spacing: 2.5px;
+    text-transform: uppercase;
+    color: #d0e4f0;
+    padding: 16px 24px;
+    text-align: left;
+    font-weight: 700;
+    border-bottom: 1px solid rgba(255,255,255,0.1);
+}
+.kusi-dashboard tbody tr {
+    border-bottom: 1px solid rgba(255,255,255,0.05);
+    transition: background 0.15s;
+}
+.kusi-dashboard tbody tr:hover { background: rgba(255,255,255,0.03); }
+.kusi-dashboard td {
+    padding: 16px 24px;
+    font-size: 15px;
+    vertical-align: middle;
+    color: #eaf2f8;
+}
+.empty-report { text-align: center; padding: 40px; color: var(--gray); font-size: 15px; }
+.text-end { text-align: right; }
+.text-center { text-align: center; }
+
+/* Row links used in list tables (yard/reference/container names).
+   NOTE: containers_list.html's *reference* link must use class
+   "ref-link-blue" (not "ref-link") — see message below the file. */
+.yard-link, .ref-link, .container-link {
+    color: var(--orange-light);
+    text-decoration: none;
+    font-family: 'Barlow Condensed', sans-serif;
+    font-weight: 700;
+    letter-spacing: 0.3px;
+}
+.yard-link, .ref-link { font-size: 17px; }
+.container-link { font-size: 16px; }
+.yard-link:hover, .ref-link:hover, .container-link:hover { text-decoration: underline; }
+
+.ref-link-blue {
+    color: var(--blue);
+    text-decoration: none;
+    font-size: 14px;
+}
+.ref-link-blue:hover { text-decoration: underline; }
+
+.size-tag { color: var(--orange); font-family: 'Barlow Condensed', sans-serif; font-weight: 700; }
+
+.loc-badge {
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    padding: 3px 10px;
+    font-family: 'Barlow Condensed', sans-serif;
+    font-size: 11px;
+    font-weight: 700;
+    letter-spacing: 1px;
+    text-transform: uppercase;
+}
+.loc-badge.mombasa { background: rgba(232,100,10,0.15); color: var(--orange); }
+.loc-badge.nairobi { background: rgba(59,130,246,0.15); color: var(--blue); }
+
+/* ---- Status badges (container status) ---- */
+.status-dot {
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    font-family: 'Barlow Condensed', sans-serif;
+    font-size: 12px;
+    font-weight: 700;
+    letter-spacing: 1px;
+    text-transform: uppercase;
+    padding: 4px 10px;
+    border-radius: 2px;
+}
+.status-dot.available { background: rgba(34,197,94,0.12); color: var(--success); }
+.status-dot.out { background: rgba(239,68,68,0.12); color: var(--danger); }
+.status-dot.reserved { background: rgba(245,158,11,0.12); color: var(--warning); }
+
+/* ---- Section label (small uppercase divider heading) ---- */
+.section-label {
+    font-family: 'Barlow Condensed', sans-serif;
+    font-size: 12px;
+    letter-spacing: 4px;
+    text-transform: uppercase;
+    color: var(--orange);
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    margin-bottom: 16px;
+}
+.section-label::after { content: ''; flex: 1; height: 1px; background: rgba(232,100,10,0.2); }
+.section-label.danger { color: var(--danger); }
+.section-label.danger::after { background: rgba(239,68,68,0.2); }
+
+/* ---- Buttons ---- */
+.btn-kusi {
+    font-family: 'Barlow Condensed', sans-serif;
+    font-weight: 700;
+    font-size: 14px;
+    letter-spacing: 1.5px;
+    text-transform: uppercase;
+    padding: 12px 24px;
+    cursor: pointer;
+    text-decoration: none;
+    transition: all 0.2s;
+    border-radius: 4px;
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+    border: 1px solid transparent;
+}
+.btn-kusi-primary { background: rgba(232,100,10,0.1); border-color: var(--orange); color: var(--orange); }
+.btn-kusi-primary:hover { background: var(--orange); color: var(--white); }
+.btn-kusi-secondary { background: rgba(255,255,255,0.04); border-color: rgba(255,255,255,0.15); color: var(--gray); }
+.btn-kusi-secondary:hover { background: rgba(255,255,255,0.1); color: var(--white); }
+/* Solid, high-contrast — used for serious/destructive confirmations (e.g. "Yes, Delete") */
+.btn-kusi-danger { background: var(--danger); border-color: var(--danger); color: var(--navy); }
+.btn-kusi-danger:hover { background: #d33c3c; border-color: #d33c3c; color: var(--navy); }
+
+/* Small icon-style action buttons used in table rows */
+.btn-kusi-sm {
+    font-family: 'Barlow Condensed', sans-serif;
+    font-weight: 700;
+    font-size: 12px;
+    letter-spacing: 1px;
+    text-transform: uppercase;
+    padding: 8px 16px;
+    cursor: pointer;
+    text-decoration: none;
+    transition: all 0.2s;
+    border-radius: 4px;
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    border: 1px solid transparent;
+    margin-right: 6px;
+    white-space: nowrap;
+}
+.btn-kusi-view { background: rgba(59,130,246,0.1); border-color: var(--blue); color: var(--blue); }
+.btn-kusi-view:hover { background: var(--blue); color: var(--white); }
+/* Translucent small danger action (row-level delete, "remove item" in forms) */
+.btn-kusi-delete { background: rgba(239,68,68,0.1); border-color: var(--danger); color: var(--danger); }
+.btn-kusi-delete:hover { background: var(--danger); color: var(--white); }
+
+/* Icon-only action buttons (used in invoices list: view/print) */
+.icon-btn {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    width: 34px;
+    height: 34px;
+    border-radius: 4px;
+    text-decoration: none;
+    font-size: 15px;
+    transition: all 0.2s;
+    margin: 0 3px;
+    border: 1px solid transparent;
+}
+.icon-btn.view { background: rgba(59,130,246,0.1); border-color: var(--blue); color: var(--blue); }
+.icon-btn.view:hover { background: var(--blue); color: var(--white); }
+.icon-btn.print { background: rgba(184,207,224,0.1); border-color: rgba(184,207,224,0.4); color: var(--gray); }
+.icon-btn.print:hover { background: var(--gray); color: var(--navy); }
+
+/* ---- Warning banner (used on destructive confirmations with cascading effects) ---- */
+.kusi-warning {
+    display: flex;
+    align-items: flex-start;
+    gap: 12px;
+    padding: 16px 18px;
+    border-radius: 4px;
+    background: rgba(245, 158, 11, 0.14);
+    border-left: 3px solid var(--warning);
+    color: #f5c168;
+    font-size: 14px;
+    line-height: 1.5;
+    margin-bottom: 28px;
+}
+.kusi-warning i { font-size: 18px; margin-top: 1px; color: var(--warning); }
+
+/* ---- Empty state (used when a list has no records) ---- */
+.empty-state { text-align: center; padding: 80px 20px; }
+.empty-state .empty-icon { font-size: 48px; opacity: 0.5; margin-bottom: 16px; }
+.empty-state h5 {
+    font-family: 'Barlow Condensed', sans-serif;
+    font-size: 22px;
+    font-weight: 800;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+    margin: 0 0 8px 0;
+}
+.empty-state p { color: #c0d8e8; font-size: 14px; margin: 0 0 24px 0; }
+
+/* ---- Form fields shared by Django form.as_p pages and manual forms ---- */
+.kusi-form-card form p { margin-bottom: 20px; }
+.kusi-form-card form label,
+.kusi-dashboard .form-label {
+    font-family: 'Barlow Condensed', sans-serif;
+    font-size: 12px;
+    letter-spacing: 2px;
+    text-transform: uppercase;
+    color: #c8dcea;
+    font-weight: 600;
+    display: block;
+    margin-bottom: 8px;
+}
+.kusi-form-card form input[type="text"],
+.kusi-form-card form input[type="number"],
+.kusi-form-card form input[type="email"],
+.kusi-form-card form input[type="tel"],
+.kusi-form-card form input[type="date"],
+.kusi-form-card form textarea,
+.kusi-form-card form select,
+.kusi-dashboard input[type="text"],
+.kusi-dashboard input[type="date"],
+.kusi-dashboard input[type="number"],
+.kusi-dashboard input[type="email"],
+.kusi-dashboard input[type="tel"],
+.kusi-dashboard textarea,
+.kusi-dashboard select {
+    width: 100%;
+    background: rgba(10,22,40,0.5);
+    border: 1px solid rgba(255,255,255,0.1);
+    color: var(--white);
+    padding: 11px 14px;
+    font-family: 'Barlow', sans-serif;
+    font-size: 15px;
+    outline: none;
+    border-radius: 4px;
+    transition: border-color 0.2s, background 0.2s;
+}
+.kusi-form-card form input::placeholder,
+.kusi-form-card form textarea::placeholder,
+.kusi-dashboard input::placeholder,
+.kusi-dashboard textarea::placeholder {
+    color: #9fb8d0;
+}
+.kusi-form-card form input:focus,
+.kusi-form-card form textarea:focus,
+.kusi-form-card form select:focus,
+.kusi-dashboard input:focus,
+.kusi-dashboard textarea:focus,
+.kusi-dashboard select:focus {
+    border-color: var(--orange);
+    background: rgba(10,22,40,0.8);
+}
+.kusi-form-card form select option,
+.kusi-dashboard select option { background: var(--navy); color: var(--white); }
+.kusi-dashboard input[readonly] {
+    background: rgba(255,255,255,0.03);
+    color: var(--white);
+    border-color: rgba(255,255,255,0.06);
+}
+.helptext { display: block; font-size: 12px; color: var(--white); margin-top: 6px; }
+ul.errorlist { list-style: none; margin: 6px 0 0 0; padding: 0; color: #ff8080; font-size: 13px; }
+
+/* Row-based grid spacing helper (Bootstrap row/col retained for layout) */
+.row.g-3 > [class*="col-"] { margin-bottom: 4px; }
+
+
+/* ================================================================
+   PAGE SHELL A — Dashboard / report layout
+   Used by: dashboard, yards list, yard detail, references list,
+   reference detail, containers list, invoices (list/create/detail)
+   ================================================================ */
+.kusi-wrapper {
+    display: flex;
+    gap: 20px;
+    min-height: calc(100vh - 40px);
+    align-items: stretch;
+}
+.kusi-dashboard {
+    flex: 1;
+    font-family: 'Barlow', sans-serif;
+    background: var(--navy);
+    color: var(--white);
+    padding: 40px;
+    border-radius: 8px;
+    overflow: hidden;
+}
+.kusi-dashboard .page-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: flex-end;
+    margin-bottom: 40px;
+    padding-bottom: 24px;
+    border-bottom: 1px solid rgba(255,255,255,0.08);
+}
+.kusi-dashboard .page-tag {
+    font-family: 'Barlow Condensed', sans-serif;
+    font-size: 16px;
+    letter-spacing: 4px;
+    text-transform: uppercase;
+    color: var(--orange);
+    margin-bottom: 8px;
+}
+.kusi-dashboard .page-header .page-title {
+    font-family: 'Barlow Condensed', sans-serif;
+    font-size: 42px;
+    font-weight: 900;
+    text-transform: uppercase;
+    line-height: 1;
+    margin: 0;
+}
+.kusi-dashboard .page-desc { font-size: 14px; color: #c0d8e8; text-align: right; }
+.kusi-dashboard .page-desc strong {
+    display: block;
+    font-family: 'Barlow Condensed', sans-serif;
+    font-size: 16px;
+    color: var(--white);
+    letter-spacing: 1px;
+}
+
+/* Page shell A: this whole page's dashboard shares the .section-label margin-bottom:0
+   variant when it sits next to a badge in a header row (e.g. invoices list). */
+.kusi-dashboard .kusi-card-header .section-label { margin-bottom: 0; }
+
+@media (max-width: 768px) {
+    .kusi-wrapper { flex-direction: column; }
+    .kusi-dashboard { padding: 20px; }
+    .kusi-dashboard .page-header { flex-direction: column; align-items: flex-start; gap: 12px; }
+    .kusi-card-header { flex-direction: column; align-items: flex-start; gap: 12px; }
+    .kusi-dashboard table { display: block; overflow-x: auto; white-space: nowrap; }
+}
+
+
+/* ================================================================
+   PAGE SHELL B — Centered single-card layout
+   Used by: create yard/reference/container, delete
+   yard/reference/container, container detail.
+
+   Differentiated from Shell A via :has() so the same .kusi-wrapper
+   class can serve both layouts without touching every template.
+   Requires a modern browser (Chrome/Edge 105+, Safari 15.4+,
+   Firefox 121+) — if you need wider support, add a
+   `wrapper-centered` class to the .kusi-wrapper div on these 7
+   pages instead and swap the selector below for that class.
+   ================================================================ */
+.kusi-wrapper:has(.kusi-form-card),
+.kusi-wrapper:has(.kusi-confirm-card),
+.kusi-wrapper:has(.kusi-detail-card) {
+    justify-content: center;
+    padding: 20px;
+}
+
+.kusi-form-card, .kusi-confirm-card, .kusi-detail-card {
+    font-family: 'Barlow', sans-serif;
+    background: var(--navy);
+    color: var(--white);
+    border-radius: 8px;
+    width: 100%;
+    align-self: flex-start;
+}
+.kusi-form-card { max-width: 640px; margin-top: 24px; }
+.kusi-confirm-card { max-width: 560px; margin-top: 40px; }
+.kusi-detail-card { max-width: 720px; margin-top: 24px; }
+
+.kusi-form-card .section-label,
+.kusi-detail-card .section-label { color: var(--orange); }
+.kusi-confirm-card .section-label { color: var(--danger); }
+.kusi-confirm-card .section-label::after { background: rgba(239, 68, 68, 0.2); }
+
+.kusi-form-card .page-title,
+.kusi-confirm-card .page-title,
+.kusi-detail-card .page-title {
+    font-family: 'Barlow Condensed', sans-serif;
+    font-weight: 900;
+    text-transform: uppercase;
+    line-height: 1;
+    font-size: 34px;
+    margin: 0 0 32px 0;
+}
+.kusi-confirm-card .page-title { font-size: 32px; margin-bottom: 28px; }
+
+/* Confirm-card's card uses a red top border instead of the default orange */
+.kusi-confirm-card .kusi-card { border-top-color: var(--danger); }
+
+.kusi-confirm-card .confirm-text { font-size: 16px; color: #eaf2f8; margin: 0 0 20px 0; line-height: 1.5; }
+.kusi-confirm-card .confirm-text strong {
+    color: var(--orange-light);
+    font-family: 'Barlow Condensed', sans-serif;
+    font-weight: 700;
+    letter-spacing: 0.3px;
+}
+
+.kusi-form-card .form-actions,
+.kusi-confirm-card .form-actions,
+.kusi-detail-card .detail-actions { display: flex; gap: 16px; }
+
+/* Key/value detail table (container detail page) */
+.kusi-detail-card table { width: 100%; border-collapse: collapse; margin-bottom: 28px; }
+.kusi-detail-card table tr { border-bottom: 1px solid rgba(255,255,255,0.06); }
+.kusi-detail-card table tr:last-child { border-bottom: none; }
+.kusi-detail-card table th {
+    font-family: 'Barlow Condensed', sans-serif;
+    font-size: 12px;
+    letter-spacing: 2px;
+    text-transform: uppercase;
+    color: #c8dcea;
+    font-weight: 600;
+    text-align: left;
+    padding: 14px 16px 14px 0;
+    width: 40%;
+    vertical-align: middle;
+}
+.kusi-detail-card table td { padding: 14px 0; font-size: 15px; color: #eaf2f8; vertical-align: middle; }
+.kusi-detail-card table td a { color: var(--blue); text-decoration: none; font-weight: 600; }
+.kusi-detail-card table td a:hover { text-decoration: underline; }
+.kusi-detail-card .size-tag { font-size: 17px; }
+
+@media (max-width: 768px) {
+    .kusi-wrapper:has(.kusi-form-card),
+    .kusi-wrapper:has(.kusi-confirm-card),
+    .kusi-wrapper:has(.kusi-detail-card) { padding: 12px; }
+    .kusi-form-card, .kusi-confirm-card, .kusi-detail-card { margin-top: 8px; }
+    .kusi-card-body { padding: 24px 20px; }
+    .kusi-form-card .form-actions,
+    .kusi-confirm-card .form-actions,
+    .kusi-detail-card .detail-actions { flex-direction: column; }
+    .kusi-detail-card table th { width: 45%; }
+}
+
+
+/* ================================================================
+   AUTH SHARED — login.html + register.html
+   ================================================================ */
+.auth-container {
+    min-height: 100vh;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: 20px;
+}
+.auth-card {
+    width: 100%;
+    max-width: 460px;
+    background: var(--steel);
+    border: none;
+    border-top: 4px solid var(--orange);
+    border-radius: 8px;
+}
+.auth-container .brand-tag {
+    font-family: 'Barlow Condensed', sans-serif;
+    font-size: 13px;
+    letter-spacing: 4px;
+    text-transform: uppercase;
+    color: var(--orange);
+    margin-bottom: 6px;
+}
+.auth-container .brand-icon {
+    width: 60px;
+    height: 60px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    margin: 0 auto 15px;
+    background: rgba(232, 100, 10, 0.12);
+    border-radius: 50%;
+}
+.auth-container h3.fw-bold {
+    font-family: 'Barlow Condensed', sans-serif;
+    font-weight: 900;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+}
+.auth-container .text-muted { color: #c0d8e8 !important; }
+.auth-container label.form-label {
+    font-family: 'Barlow Condensed', sans-serif;
+    font-size: 12px;
+    letter-spacing: 2px;
+    text-transform: uppercase;
+    color: #c8dcea;
+    font-weight: 600;
+}
+.auth-container .form-control {
+    min-height: 46px;
+    background: rgba(10, 22, 40, 0.5);
+    border: 1px solid rgba(255, 255, 255, 0.1);
+    color: var(--white);
+}
+.auth-container .form-control::placeholder { color: #9fb8d0; }
+.auth-container .form-control:focus {
+    background: rgba(10, 22, 40, 0.8);
+    border-color: var(--orange);
+    color: var(--white);
+    box-shadow: 0 0 0 0.2rem rgba(232, 100, 10, 0.15);
+}
+.auth-container .btn-login,
+.auth-container .btn-register {
+    min-height: 46px;
+    font-family: 'Barlow Condensed', sans-serif;
+    font-weight: 700;
+    letter-spacing: 1.5px;
+    text-transform: uppercase;
+    background: var(--orange);
+    border: 1px solid var(--orange);
+    color: var(--navy);
+    transition: all 0.2s;
+}
+.auth-container .btn-login:hover,
+.auth-container .btn-register:hover {
+    background: #d35c09;
+    border-color: #d35c09;
+    color: var(--navy);
+}
+.auth-container .text-danger { color: #ff8080 !important; }
+.auth-container .alert-danger,
+.auth-container .alert-error {
+    background: rgba(239, 68, 68, 0.14);
+    border: 1px solid var(--danger);
+    color: #ff8080;
+}
+.auth-container .alert-success {
+    background: rgba(34, 197, 94, 0.14);
+    border: 1px solid var(--success);
+    color: var(--success);
+}
+.auth-container .alert-warning {
+    background: rgba(245, 158, 11, 0.14);
+    border: 1px solid var(--warning);
+    color: var(--warning);
+}
+.auth-container .alert-info {
+    background: rgba(59, 130, 246, 0.14);
+    border: 1px solid var(--blue);
+    color: #7aaeff;
+}
+.auth-container a { color: var(--orange-light); }
+.auth-container a:hover { color: var(--orange); }
+
+
+/* ================================================================
+   PAGE-SPECIFIC STYLES
+   Only what's unique to each page — everything reusable lives above.
+   ================================================================ */
+
+/* dashboard */
+.kusi-dashboard .grand-total-row {
+    display: grid;
+    grid-template-columns: repeat(4, 1fr);
+    gap: 2px;
+    margin-bottom: 48px;
+}
+.gt-card {
+    background: var(--steel);
+    padding: 28px 32px;
+    border-top: 4px solid transparent;
+    position: relative;
+    overflow: hidden;
+    transition: background 0.2s, transform 0.15s;
+}
+.gt-card:hover { background: #24395c; transform: translateY(-2px); }
+.gt-card::after {
+    content: '';
+    position: absolute;
+    bottom: 0;
+    right: 0;
+    width: 80px;
+    height: 80px;
+    border-top: 2px solid rgba(255,255,255,0.04);
+    border-left: 2px solid rgba(255,255,255,0.04);
+}
+.gt-card.total { border-top-color: var(--orange); }
+.gt-card.available { border-top-color: var(--success); }
+.gt-card.out { border-top-color: var(--danger); }
+.gt-card.reserved { border-top-color: var(--warning); }
+.gt-icon { font-size: 28px; margin-bottom: 12px; }
+.gt-label {
+    font-family: 'Barlow Condensed', sans-serif;
+    font-size: 13px;
+    letter-spacing: 3px;
+    text-transform: uppercase;
+    color: #c8dcea;
+    margin-bottom: 8px;
+    font-weight: 600;
+}
+.gt-num { font-family: 'Barlow Condensed', sans-serif; font-size: 56px; font-weight: 900; line-height: 1; }
+.gt-card.total .gt-num { color: var(--orange); }
+.gt-card.available .gt-num { color: var(--success); }
+.gt-card.out .gt-num { color: var(--danger); }
+.gt-card.reserved .gt-num { color: var(--warning); }
+.gt-sub { font-size: 14px; color: #c0d8e8; margin-top: 6px; }
+
+.kusi-dashboard .breakdown-table,
+.kusi-dashboard .recent-table { margin-bottom: 48px; }
+.breakdown-table td:first-child {
+    font-family: 'Barlow Condensed', sans-serif;
+    font-size: 17px;
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+}
+.num-cell { font-family: 'Barlow Condensed', sans-serif; font-size: 20px; font-weight: 900; }
+.num-cell.in { color: var(--success); }
+.num-cell.out { color: var(--danger); }
+.num-cell.total { color: var(--orange); }
+.progress-cell { min-width: 120px; }
+.prog-wrap { background: rgba(255,255,255,0.06); height: 6px; overflow: hidden; border-radius: 3px; }
+.prog-bar { height: 100%; background: var(--orange); transition: width 0.8s ease; }
+
+.recent-table td { padding: 12px 16px; font-size: 14px; }
+.recent-table td:first-child { font-family: 'Barlow Condensed', sans-serif; font-size: 15px; font-weight: 700; }
+
+.export-card {
+    background: var(--steel);
+    border-top: 3px solid var(--success);
+    padding: 24px 28px;
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    justify-content: space-between;
+    gap: 20px;
+}
+.export-info h5 {
+    font-family: 'Barlow Condensed', sans-serif;
+    font-size: 22px;
+    font-weight: 900;
+    text-transform: uppercase;
+    letter-spacing: 1px;
+    margin: 0 0 4px 0;
+}
+.export-info p { font-size: 13px; color: #c0d8e8; margin: 0; }
+.export-controls { display: flex; gap: 16px; align-items: center; flex-wrap: wrap; }
+select.kusi-select {
+    background: rgba(10,22,40,0.5);
+    border: 1px solid rgba(255,255,255,0.1);
+    color: var(--white);
+    padding: 12px 16px;
+    font-family: 'Barlow', sans-serif;
+    font-size: 15px;
+    outline: none;
+    border-radius: 4px;
+    min-width: 200px;
+    transition: border-color 0.2s;
+}
+select.kusi-select:focus { border-color: var(--success); }
+select.kusi-select option { background: var(--navy); color: var(--white); }
+.btn-export {
+    font-family: 'Barlow Condensed', sans-serif;
+    font-weight: 700;
+    font-size: 14px;
+    letter-spacing: 1.5px;
+    text-transform: uppercase;
+    background: rgba(34,197,94,0.1);
+    border: 1px solid var(--success);
+    color: var(--success);
+    padding: 12px 24px;
+    cursor: pointer;
+    text-decoration: none;
+    transition: all 0.2s;
+    border-radius: 4px;
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+}
+.btn-export:hover { background: var(--success); color: var(--white); }
+
+@media (max-width: 1024px) {
+    .kusi-dashboard .grand-total-row { grid-template-columns: repeat(2, 1fr); }
+}
+@media (max-width: 768px) {
+    .kusi-dashboard .grand-total-row { grid-template-columns: 1fr; }
+    .export-card { flex-direction: column; align-items: flex-start; }
+}
+
+
+/* list yard */
+/* (uses shared .yard-link, table, and button styles — nothing unique) */
+
+
+/* yard detail */
+.yard-summary {
+    background: var(--steel);
+    border-top: 4px solid var(--orange);
+    border-radius: 6px;
+    padding: 32px;
+    margin-bottom: 40px;
+    display: flex;
+    justify-content: space-between;
+    align-items: flex-end;
+    flex-wrap: wrap;
+    gap: 24px;
+}
+.yard-summary .page-tag {
+    font-family: 'Barlow Condensed', sans-serif;
+    font-size: 14px;
+    letter-spacing: 3px;
+    text-transform: uppercase;
+    color: var(--orange);
+    margin-bottom: 8px;
+}
+.yard-summary h1 {
+    font-family: 'Barlow Condensed', sans-serif;
+    font-size: 38px;
+    font-weight: 900;
+    text-transform: uppercase;
+    line-height: 1;
+    margin: 0 0 12px 0;
+}
+.yard-summary .loc-badge {
+    background: rgba(59,130,246,0.15);
+    color: var(--blue);
+    border-radius: 3px;
+    padding: 4px 12px;
+}
+.yard-summary .ref-count { text-align: right; }
+.yard-summary .ref-count .num {
+    font-family: 'Barlow Condensed', sans-serif;
+    font-size: 48px;
+    font-weight: 900;
+    color: var(--orange);
+    line-height: 1;
+}
+.yard-summary .ref-count .label {
+    font-family: 'Barlow Condensed', sans-serif;
+    font-size: 12px;
+    letter-spacing: 2px;
+    text-transform: uppercase;
+    color: #c8dcea;
+    margin-top: 6px;
+}
+.list-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 16px; }
+.bottom-actions { display: flex; gap: 16px; margin-top: 8px; }
+
+@media (max-width: 768px) {
+    .yard-summary { flex-direction: column; align-items: flex-start; }
+    .yard-summary .ref-count { text-align: left; }
+    .list-header { flex-direction: column; align-items: flex-start; gap: 12px; }
+    .bottom-actions { flex-direction: column; }
+}
+
+
+/* delete yard */
+/* (uses shared .kusi-confirm-card / .kusi-warning / .btn-kusi-danger — nothing unique) */
+
+
+/* create reference */
+/* (uses shared .kusi-form-card — nothing unique) */
+
+
+/* reference detail */
+.ref-summary {
+    background: var(--steel);
+    border-top: 4px solid var(--orange);
+    border-radius: 6px;
+    padding: 32px;
+    margin-bottom: 40px;
+    display: flex;
+    justify-content: space-between;
+    align-items: flex-end;
+    flex-wrap: wrap;
+    gap: 24px;
+}
+.ref-summary .page-tag {
+    font-family: 'Barlow Condensed', sans-serif;
+    font-size: 14px;
+    letter-spacing: 3px;
+    text-transform: uppercase;
+    color: var(--orange);
+    margin-bottom: 8px;
+}
+.ref-summary h1 {
+    font-family: 'Barlow Condensed', sans-serif;
+    font-size: 38px;
+    font-weight: 900;
+    text-transform: uppercase;
+    line-height: 1;
+    margin: 0 0 12px 0;
+}
+.ref-summary .yard-link { font-size: 14px; color: var(--gray); }
+.ref-summary .yard-link a { color: var(--blue); text-decoration: none; font-weight: 600; font-size: 15px; }
+.ref-summary .yard-link a:hover { text-decoration: underline; }
+.ref-summary .container-count { text-align: right; }
+.ref-summary .container-count .num {
+    font-family: 'Barlow Condensed', sans-serif;
+    font-size: 48px;
+    font-weight: 900;
+    color: var(--orange);
+    line-height: 1;
+}
+.ref-summary .container-count .label {
+    font-family: 'Barlow Condensed', sans-serif;
+    font-size: 12px;
+    letter-spacing: 2px;
+    text-transform: uppercase;
+    color: #c8dcea;
+    margin-top: 6px;
+}
+
+@media (max-width: 768px) {
+    .ref-summary { flex-direction: column; align-items: flex-start; }
+    .ref-summary .container-count { text-align: left; }
+}
+
+
+/* delete reference */
+/* (uses shared .kusi-confirm-card / .kusi-warning / .btn-kusi-danger — nothing unique) */
+
+
+/* list reference */
+/* (uses shared .ref-link / .yard-link / table — nothing unique) */
+
+
+/* invoices (create) */
+.kusi-dashboard .page-header ~ form thead th,
+.kusi-dashboard #items-table thead th { padding: 12px 16px; }
+#items-table tbody td { padding: 10px 12px; }
+#items-table tfoot th {
+    padding: 16px;
+    border-top: 1px solid rgba(255,255,255,0.1);
+    font-family: 'Barlow Condensed', sans-serif;
+    font-size: 14px;
+    letter-spacing: 1px;
+    text-transform: uppercase;
+    color: var(--white);
+}
+#grand-total-display {
+    color: var(--orange);
+    font-family: 'Barlow Condensed', sans-serif;
+    font-size: 20px;
+    font-weight: 900;
+}
+.item-total { font-family: 'Barlow Condensed', sans-serif; font-weight: 700; color: var(--success); }
+/* NOTE: the "remove item" button in this page's Products table must
+   use class "btn-kusi-delete" (not "btn-kusi-danger") — see message
+   below the file. */
+
+
+/* invoice list */
+.kusi-dashboard td strong {
+    color: var(--white);
+    font-family: 'Barlow Condensed', sans-serif;
+    font-weight: 700;
+    letter-spacing: 0.3px;
+}
+.grand-total-cell strong { color: var(--orange); font-size: 17px; }
+
+
+/* invoice detail */
+.kusi-dashboard .page-header { align-items: center; }
+.invoice-sheet {
+    background: var(--steel);
+    border-top: 3px solid var(--orange);
+    border-radius: 6px;
+    padding: 48px;
+}
+.invoice-top { display: flex; justify-content: space-between; gap: 24px; margin-bottom: 32px; }
+.invoice-top .invoice-label {
+    font-family: 'Barlow Condensed', sans-serif;
+    font-size: 34px;
+    font-weight: 900;
+    letter-spacing: 2px;
+    color: var(--orange);
+    margin: 0 0 12px 0;
+}
+.invoice-top p { margin: 0 0 4px 0; font-size: 15px; color: #eaf2f8; }
+.invoice-top .to-block { text-align: right; }
+.invoice-top .to-block h4 {
+    font-family: 'Barlow Condensed', sans-serif;
+    font-size: 22px;
+    font-weight: 800;
+    text-transform: uppercase;
+    margin: 0 0 8px 0;
+}
+.invoice-top .to-block p { color: var(--gray); }
+.field-label {
+    font-family: 'Barlow Condensed', sans-serif;
+    font-weight: 700;
+    letter-spacing: 0.5px;
+    color: var(--orange);
+    text-transform: uppercase;
+    font-size: 13px;
+}
+.divider { border: none; border-top: 1px solid rgba(255,255,255,0.08); margin: 28px 0; }
+.attention-block { margin-bottom: 28px; font-size: 15px; }
+.invoice-sheet table { margin-bottom: 32px; }
+.invoice-sheet thead th { padding: 14px 20px; }
+.invoice-sheet tbody td { padding: 14px 20px; border-bottom: 1px solid rgba(255,255,255,0.05); }
+.invoice-sheet tfoot th {
+    padding: 18px 20px;
+    font-family: 'Barlow Condensed', sans-serif;
+    font-size: 15px;
+    letter-spacing: 1px;
+    text-transform: uppercase;
+    border-top: 1px solid rgba(255,255,255,0.15);
+    color: var(--white);
+}
+.grand-total-num { color: var(--orange); font-size: 22px; font-weight: 900; }
+.detail-row { display: flex; gap: 40px; margin-bottom: 28px; flex-wrap: wrap; }
+.detail-row > div { flex: 1; min-width: 220px; }
+.detail-value { color: #eaf2f8; font-size: 15px; margin-top: 4px; }
+.signature-row { display: flex; gap: 40px; margin-top: 48px; flex-wrap: wrap; }
+.signature-row > div { flex: 1; min-width: 220px; }
+.signature-line { border-bottom: 1px solid rgba(255,255,255,0.3); width: 80%; height: 50px; margin-top: 12px; }
+.signature-name { margin-top: 10px; color: var(--gray); font-size: 14px; }
+.ack-block { margin-top: 48px; }
+.ack-block h6 {
+    font-family: 'Barlow Condensed', sans-serif;
+    font-size: 14px;
+    letter-spacing: 2px;
+    text-transform: uppercase;
+    color: var(--orange);
+    margin-bottom: 8px;
+}
+.ack-block p { color: #eaf2f8; font-size: 14px; }
+
+@media (max-width: 768px) {
+    .invoice-sheet { padding: 24px; }
+    .invoice-top { flex-direction: column; }
+    .invoice-top .to-block { text-align: left; }
+    .kusi-dashboard .page-header { flex-direction: column; align-items: flex-start; gap: 16px; }
+}
+
+/* Print: reset to clean black-on-white for the physical invoice copy */
+@media print {
+    body { background: white !important; }
+    .sidebar, .mobile-navbar, .sidebar-overlay, .btn, .main-content > .alert { display: none !important; }
+    .main-content { margin-left: 0 !important; padding: 0 !important; }
+    .kusi-wrapper { display: block !important; min-height: 0 !important; }
+    .kusi-dashboard { background: white !important; color: #111 !important; padding: 0 !important; border-radius: 0 !important; }
+    .kusi-dashboard .page-header, .kusi-dashboard .page-tag { display: none !important; }
+    .invoice-sheet { background: white !important; border-top: none !important; padding: 0 !important; }
+    .invoice-top .invoice-label, .field-label, .ack-block h6 { color: #111 !important; }
+    .invoice-top p, .kusi-dashboard tbody td, .detail-value, .ack-block p, .attention-block { color: #111 !important; }
+    .invoice-top .to-block p, .signature-name { color: #444 !important; }
+    .divider, .kusi-dashboard thead th, .kusi-dashboard tbody td, .kusi-dashboard tfoot th { border-color: #ccc !important; }
+    .kusi-dashboard thead th { color: #333 !important; }
+    .grand-total-num { color: #111 !important; }
+    .signature-line { border-bottom: 1px solid #000 !important; }
+}
+
+
+/* ================================================================
+   APPEND THIS TO kusi-theme.css
+   ================================================================ */
+
+/* ---- Two extra status variants for inquiries ----
+   Add these next to your existing .status-dot rules in GLOBAL */
+.status-dot.new { background: rgba(232,100,10,0.15); color: var(--orange); }
+.status-dot.archived { background: rgba(184,207,224,0.12); color: var(--gray); }
+
+/* ---- Extra small action buttons ----
+   Add these next to .btn-kusi-view / .btn-kusi-delete in GLOBAL */
+.btn-kusi-read {
+    background: rgba(34,197,94,0.1);
+    border-color: var(--success);
+    color: var(--success);
+}
+.btn-kusi-read:hover { background: var(--success); color: var(--navy); }
+
+.btn-kusi-archive {
+    background: rgba(184,207,224,0.08);
+    border-color: rgba(184,207,224,0.4);
+    color: var(--gray);
+}
+.btn-kusi-archive:hover { background: var(--gray); color: var(--navy); }
+
+
+/* inquiry list */
+.inquiry-filters {
+    display: flex;
+    gap: 8px;
+    flex-wrap: wrap;
+    margin-bottom: 32px;
+}
+.filter-tab {
+    font-family: 'Barlow Condensed', sans-serif;
+    font-size: 13px;
+    font-weight: 700;
+    letter-spacing: 1.5px;
+    text-transform: uppercase;
+    padding: 10px 18px;
+    border-radius: 4px;
+    text-decoration: none;
+    color: var(--gray);
+    background: rgba(255,255,255,0.04);
+    border: 1px solid rgba(255,255,255,0.1);
+    transition: all 0.2s;
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+}
+.filter-tab:hover { background: rgba(255,255,255,0.08); color: var(--white); }
+.filter-tab.active {
+    background: rgba(232,100,10,0.12);
+    border-color: var(--orange);
+    color: var(--orange);
+}
+.filter-count {
+    font-size: 11px;
+    padding: 1px 7px;
+    border-radius: 10px;
+    background: var(--orange);
+    color: var(--navy);
+    font-weight: 900;
+}
+.filter-tab.active .filter-count { background: var(--orange); color: var(--navy); }
+
+/* Unread rows get a left accent so they stand out at a glance */
+.kusi-dashboard tbody tr.row-unread {
+    background: rgba(232,100,10,0.04);
+    box-shadow: inset 3px 0 0 var(--orange);
+}
+.kusi-dashboard tbody tr.row-unread:hover { background: rgba(232,100,10,0.08); }
+.kusi-dashboard tbody tr.row-unread td a.container-link { color: var(--orange); }
+
+/* Action buttons sit in inline forms, so keep them on one line */
+.inquiry-actions { white-space: nowrap; }
+.inquiry-actions form {
+    display: inline-block;
+    margin: 0;
+}
+.inquiry-actions .btn-kusi-sm { margin-right: 4px; }
+
+/* The empty state sits inside a full-width table cell here */
+.kusi-dashboard td .empty-state { padding: 60px 20px; }
+
+
+/* inquiry detail */
+.inquiry-notes {
+    background: rgba(10,22,40,0.4);
+    border-left: 3px solid var(--orange);
+    border-radius: 4px;
+    padding: 20px 22px;
+    margin-bottom: 32px;
+}
+.inquiry-notes p {
+    color: #eaf2f8;
+    font-size: 15px;
+    line-height: 1.6;
+    margin: 8px 0 0 0;
+}
+.kusi-detail-card .detail-actions { flex-wrap: wrap; }
+.kusi-detail-card .detail-actions form { margin: 0; }

@@ -1,0 +1,98 @@
+{% extends 'base.html' %}
+
+{% block content %}
+
+<div class="kusi-wrapper">
+    <div class="kusi-dashboard">
+
+        <!-- PAGE HEADING -->
+        <div class="page-header">
+            <div>
+                <div class="page-tag">Yard Management</div>
+                <h1 class="page-title">Yards</h1>
+            </div>
+
+            <a
+                href="{% url 'create_yard' %}"
+                class="btn-kusi btn-kusi-primary">
+                <i class="bi bi-plus-lg"></i>
+                Add Yard
+            </a>
+        </div>
+
+
+        <div class="section-label">Registered Yards</div>
+
+        <div class="kusi-card">
+
+            <div class="table-responsive">
+
+                <table>
+
+                    <thead>
+                        <tr>
+                            <th>#</th>
+                            <th>Yard Name</th>
+                            <th>Location</th>
+                            <th>Actions</th>
+                        </tr>
+                    </thead>
+
+                    <tbody>
+
+                        {% for yard in yards %}
+
+                        <tr>
+
+                            <td>{{ forloop.counter }}</td>
+
+                            <td>
+                                <a href="{% url 'yard_detail' yard.slug %}" class="yard-link">
+                                    {{ yard.name }}
+                                </a>
+                            </td>
+
+                            <td style="color:var(--gray)">
+                                {{ yard.location|default:"-" }}
+                            </td>
+
+                            <td>
+
+                                <a
+                                    href="{% url 'yard_detail' yard.slug %}"
+                                    class="btn-kusi-sm btn-kusi-view">
+                                    View
+                                </a>
+
+                                <a
+                                    href="{% url 'delete_yard' yard.slug %}"
+                                    class="btn-kusi-sm btn-kusi-delete">
+                                    Delete
+                                </a>
+
+                            </td>
+
+                        </tr>
+
+                        {% empty %}
+
+                        <tr>
+                            <td colspan="4" class="empty-report">
+                                No yards have been created.
+                            </td>
+                        </tr>
+
+                        {% endfor %}
+
+                    </tbody>
+
+                </table>
+
+            </div>
+
+        </div>
+
+    </div> <!-- Close kusi-dashboard -->
+</div> <!-- Close kusi-wrapper -->
+
+{% endblock %}

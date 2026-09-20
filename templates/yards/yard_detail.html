@@ -1,0 +1,129 @@
+{% extends 'base.html' %}
+
+{% block content %}
+
+<div class="kusi-wrapper">
+    <div class="kusi-dashboard">
+
+        <!-- YARD SUMMARY -->
+        <div class="yard-summary">
+
+            <div>
+                <div class="page-tag">Yard Overview</div>
+                <h1>{{ yard.name }}</h1>
+                <span class="loc-badge">
+                    📍 {{ yard.location|default:"Not specified" }}
+                </span>
+            </div>
+
+            <div class="ref-count">
+                <div class="num">{{ references.count }}</div>
+                <div class="label">Total References</div>
+            </div>
+
+        </div>
+
+
+        <!-- REFERENCES -->
+        <div class="list-header">
+            <div class="section-label" style="margin-bottom:0;">References</div>
+
+            <a
+                href="{% url 'create_reference' %}"
+                class="btn-kusi btn-kusi-primary">
+                <i class="bi bi-plus-lg"></i>
+                Add Reference
+            </a>
+        </div>
+
+        <div class="kusi-card">
+
+            <div class="table-responsive">
+
+                <table>
+
+                    <thead>
+                        <tr>
+                            <th>#</th>
+                            <th>Reference Number</th>
+                            <th>Containers</th>
+                            <th>Actions</th>
+                        </tr>
+                    </thead>
+
+                    <tbody>
+
+                        {% for reference in references %}
+
+                        <tr>
+
+                            <td>{{ forloop.counter }}</td>
+
+                            <td>
+                                <a href="{% url 'reference_detail' reference.slug %}" class="ref-link">
+                                    {{ reference.reference_no }}
+                                </a>
+                            </td>
+
+                            <td style="color:var(--gray)">
+                                {{ reference.containers.count }}
+                            </td>
+
+                            <td>
+
+                                <a
+                                    href="{% url 'reference_detail' reference.slug %}"
+                                    class="btn-kusi-sm btn-kusi-view">
+                                    View
+                                </a>
+
+                                <a
+                                    href="{% url 'delete_reference' reference.slug %}"
+                                    class="btn-kusi-sm btn-kusi-delete">
+                                    Delete
+                                </a>
+
+                            </td>
+
+                        </tr>
+
+                        {% empty %}
+
+                        <tr>
+                            <td colspan="4" class="empty-report">
+                                No references found for this yard.
+                            </td>
+                        </tr>
+
+                        {% endfor %}
+
+                    </tbody>
+
+                </table>
+
+            </div>
+
+        </div>
+
+
+        <!-- BOTTOM ACTIONS -->
+        <div class="bottom-actions">
+
+            <a
+                href="{% url 'yard_list' %}"
+                class="btn-kusi btn-kusi-secondary">
+                Back to Yards
+            </a>
+
+            <a
+                href="{% url 'delete_yard' yard.slug %}"
+                class="btn-kusi btn-kusi-danger">
+                Delete Yard
+            </a>
+
+        </div>
+
+    </div> <!-- Close kusi-dashboard -->
+</div> <!-- Close kusi-wrapper -->
+
+{% endblock %}

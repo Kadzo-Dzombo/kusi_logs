@@ -1,0 +1,60 @@
+{% extends 'base.html' %}
+
+{% block content %}
+
+<div class="kusi-wrapper">
+
+    <div class="kusi-confirm-card">
+
+        <div class="section-label">Confirm Deletion</div>
+        <h1 class="page-title">Delete Reference</h1>
+
+        <div class="kusi-card">
+
+            <div class="kusi-card-body">
+
+                <p class="confirm-text">
+                    Are you sure you want to delete reference
+                    <strong>{{ reference.reference_no }}</strong>?
+                </p>
+
+                <div class="kusi-warning">
+                    <i class="bi bi-exclamation-triangle-fill"></i>
+                    <div>
+                        All containers associated with this reference
+                        will also be deleted.
+                    </div>
+                </div>
+
+                <form method="POST">
+
+                    {% csrf_token %}
+
+                    <div class="form-actions">
+
+                        <button
+                            type="submit"
+                            class="btn-kusi btn-kusi-danger">
+                            <i class="bi bi-trash"></i>
+                            Yes, Delete
+                        </button>
+
+                        <a
+                            href="{% url 'reference_detail' reference.slug %}"
+                            class="btn-kusi btn-kusi-secondary">
+                            Cancel
+                        </a>
+
+                    </div>
+
+                </form>
+
+            </div>
+
+        </div>
+
+    </div>
+
+</div>
+
+{% endblock %}

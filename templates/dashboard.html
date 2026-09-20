@@ -1,0 +1,206 @@
+{% extends 'base.html' %}
+
+{% block content %}
+
+<div class="kusi-wrapper">
+    <!-- MAIN DASHBOARD CONTENT -->
+
+    <div class="kusi-dashboard">
+
+        <!-- PAGE HEADING -->
+        <div class="section-label">Container Yard Overview</div>
+        <div class="page-header">
+            <div>
+                <div class="page-tag">Live Dashboard</div>
+                <h1 class="page-title">Container Stock Status</h1>
+            </div>
+            <div class="page-desc">
+                <strong>Updated Just Now</strong>
+                Real-time yard and container tracking
+            </div>
+        </div>
+
+        <!-- GRAND TOTAL CARDS -->
+        <div class="grand-total-row">
+            <!-- Total Containers -->
+            <div class="gt-card total">
+                <div class="gt-icon"><i class="bi bi-columns-gap"></i></div>
+                <div class="gt-label">Total Yards</div>
+                <div class="gt-num">{{ yards|length }}</div>
+                <!-- <div class="gt-sub">All yards</div> -->
+            </div>
+
+            <!-- Available -->
+            <div class="gt-card available">
+                <div class="gt-icon"><i class="bi bi-receipt"></i></div>
+                <div class="gt-label">Total References</div>
+                <div class="gt-num">{{ total_references }}</div>
+                <!-- <div class="gt-sub">All references</div> -->
+            </div>
+
+            <!-- Out of Yard -->
+            <div class="gt-card out">
+                <div class="gt-icon"><i class="bi bi-box"></i></div>
+                <div class="gt-label">Total Containers</div>
+                <div class="gt-num">{{ total_containers }}</div>
+                <!-- <div class="gt-sub">All Containers</div> -->
+            </div>
+
+            <!-- Reserved -->
+            <div class="gt-card reserved">
+                <div class="gt-icon"><i class="bi bi-box-arrow-in-up-right"></i></div>
+                <div class="gt-label">Out of Yard</div>
+                <div class="gt-num">{{ out_containers }}</div>
+                <!-- <div class="gt-sub">Sold Containers</div> -->
+            </div>
+        </div>
+
+
+        <!-- YARD STOCK SUMMARY -->
+        <div class="section-label">Yard Stock Summary</div>
+        <div class="table-responsive">
+            <table class="breakdown-table">
+                <thead>
+                    <tr>
+                        <th>Yard</th>
+                        <th>Location</th>
+                        <th>Total In</th>
+                        <th>Stock Out</th>
+                        <th>Reserved</th>
+                        <th>Total</th>
+                        <th>Stock Fill</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for yard in yards %}
+                    <tr>
+                        <td>{{ yard.name }}</td>
+                        <td>
+                            <span class="loc-badge {% if 'mombasa' in yard.location|lower %}mombasa{% else %}nairobi{% endif %}">
+                                📍 {{ yard.location|default:"-" }}
+                            </span>
+                        </td>
+                        <td><span class="num-cell in">{{ yard.total_in }}</span></td>
+                        <td><span class="num-cell out">{{ yard.stock_out }}</span></td>
+                        <td><span class="num-cell" style="color:var(--warning)">{{ yard.reserved }}</span></td>
+                        <td><span class="num-cell total">{{ yard.total }}</span></td>
+                        <td class="progress-cell">
+                            {% if yard.capacity > 0 %}
+                                <div style="display:flex;align-items:center;gap:8px">
+                                    <div class="prog-wrap" style="flex:1">
+                                        <div class="prog-bar" style="width: {{ yard.stock_fill }}%;"></div>
+                                    </div>
+                                    <span style="font-family:'Barlow Condensed',sans-serif;font-size:13px;color:var(--gray);width:32px">
+                                        {{ yard.stock_fill }}%
+                                    </span>
+                                </div>
+                            {% else %}
+                                <span style="color:var(--gray)">N/A</span>
+                            {% endif %}
+                        </td>
+                    </tr>
+                    {% empty %}
+                    <tr>
+                        <td colspan="7" class="empty-report">
+                            No yard information available.
+                        </td>
+                    </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+        </div>
+
+
+        <!-- RECENT STOCK OUT -->
+        <div class="section-label">Recent Stock Out</div>
+        <div class="table-responsive">
+            <table class="recent-table">
+                <thead>
+                    <tr>
+                        <th>Container No</th>
+                        <th>Size</th>
+                        <th>Yard</th>
+                        <th>Reference</th>
+                        <th>Status</th>
+                        <th>Client</th>
+                        <th>Date</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for container in recent_containers %}
+                    <tr>
+                        <td>{{ container.container_no }}</td>
+                        <td style="color:var(--orange); font-family:'Barlow Condensed',sans-serif; font-weight:700;">
+                            {{ container.size|default:"-" }}
+                        </td>
+                        <td>{{ container.reference.yard.name }}</td>
+                        <td style="color:var(--gray)">{{ container.reference.reference_no }}</td>
+                        <td>
+                            <span class="status-dot 
+                                {% if container.status == 'Available' %}available
+                                {% elif container.status == 'Out of Yard' %}out
+                                {% elif container.status == 'Reserved' %}reserved
+                                {% else %}available{% endif %}">
+                                {{ container.status }}
+                            </span>
+                        </td>
+                        <td>{{ container.client_name|default:"-" }}</td>
+                        <td style="color:var(--gray); font-size:13px;">{{ container.date|date:"d M Y" }}</td>
+                    </tr>
+                    {% empty %}
+                    <tr>
+                        <td colspan="7" class="empty-report">
+                            No recent stock out records.
+                        </td>
+                    </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+        </div>
+
+
+        <!-- EXPORT SECTION -->
+        <div class="section-label">Export Data</div>
+        <div class="export-card">
+
+            <div class="export-info">
+                <h5>Export Container Summary</h5>
+                <p>Select a container status to generate a downloadable summary.</p>
+            </div>
+
+            <div class="export-controls">
+                <select id="status" name="status" class="kusi-select">
+                    <option value="total">Total Containers</option>
+                    <option value="Available">Available</option>
+                    <option value="Out of Yard">Out of Yard</option>
+                    <option value="Reserved">Reserved</option>
+                </select>
+
+                <a id="csvExport" href="{% url 'export_container_csv' %}?status=total" class="btn-export">
+                    <span>🗄️</span> Export CSV
+                </a>
+            </div>
+
+        </div>
+
+    </div> <!-- Close kusi-dashboard -->
+</div> <!-- Close kusi-wrapper -->
+
+
+<!-- EXPORT STATUS SCRIPT -->
+<script>
+    document.addEventListener("DOMContentLoaded", function() {
+        const statusSelect = document.getElementById('status');
+        const csvExport = document.getElementById('csvExport');
+
+        if (statusSelect && csvExport) {
+            statusSelect.addEventListener('change', function () {
+                const selectedStatus = encodeURIComponent(this.value);
+                // Update the href to append the chosen status
+                csvExport.href = "{% url 'export_container_csv' %}?status=" + selectedStatus;
+            });
+        }
+    });
+</script>
+
+{% endblock %}

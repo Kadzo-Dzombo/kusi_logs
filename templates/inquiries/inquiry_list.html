@@ -1,0 +1,194 @@
+{% extends 'base.html' %}
+
+{% block title %}
+Inquiries
+{% endblock %}
+
+
+{% block content %}
+
+<div class="kusi-wrapper">
+    <div class="kusi-dashboard">
+
+        <!-- PAGE HEADING -->
+        <div class="page-header">
+            <div>
+                <div class="page-tag">Customer Requests</div>
+                <h1 class="page-title">Inquiries</h1>
+            </div>
+
+            <div class="page-desc">
+                <strong>{{ unread_count }} Unread</strong>
+                Quote requests from the website
+            </div>
+        </div>
+
+
+        <!-- FILTER TABS -->
+        <div class="inquiry-filters">
+            <a href="{% url 'inquiry_list' %}"
+               class="filter-tab {% if active_filter == 'active' %}active{% endif %}">
+                All Active
+            </a>
+
+            <a href="{% url 'inquiry_list' %}?status=new"
+               class="filter-tab {% if active_filter == 'new' %}active{% endif %}">
+                Unread
+                {% if unread_count %}<span class="filter-count">{{ unread_count }}</span>{% endif %}
+            </a>
+
+            <a href="{% url 'inquiry_list' %}?status=read"
+               class="filter-tab {% if active_filter == 'read' %}active{% endif %}">
+                Read
+            </a>
+
+            <a href="{% url 'inquiry_list' %}?status=archived"
+               class="filter-tab {% if active_filter == 'archived' %}active{% endif %}">
+                Archived
+                {% if archived_count %}<span class="filter-count">{{ archived_count }}</span>{% endif %}
+            </a>
+        </div>
+
+
+        <div class="section-label">
+            {% if active_filter == 'archived' %}Archived Inquiries{% else %}Latest First{% endif %}
+        </div>
+
+        <div class="kusi-card">
+
+            <div class="table-responsive">
+
+                <table>
+
+                    <thead>
+                        <tr>
+                            <th>Received</th>
+                            <th>Name</th>
+                            <th>Email</th>
+                            <th>Container</th>
+                            <th>Delivery To</th>
+                            <th>Status</th>
+                            <th>Actions</th>
+                        </tr>
+                    </thead>
+
+                    <tbody>
+
+                        {% for inquiry in inquiries %}
+
+                        <tr class="{% if inquiry.is_unread %}row-unread{% endif %}">
+
+                            <td style="color:var(--gray); font-size:13px;">
+                                {{ inquiry.created_at|date:"d M Y" }}<br>
+                                <span style="opacity:0.7">{{ inquiry.created_at|time:"H:i" }}</span>
+                            </td>
+
+                            <td>
+                                <a href="{% url 'inquiry_detail' inquiry.pk %}" class="container-link">
+                                    {{ inquiry.full_name }}
+                                </a>
+                            </td>
+
+                            <td style="color:var(--gray); font-size:14px;">
+                                {{ inquiry.email }}
+                            </td>
+
+                            <td>
+                                <span class="size-tag">{{ inquiry.container_type|default:"-" }}</span>
+                            </td>
+
+                            <td style="color:var(--gray); font-size:14px;">
+                                {{ inquiry.delivery_location|default:"-" }}
+                            </td>
+
+                            <td>
+                                <span class="status-dot
+                                    {% if inquiry.status == 'new' %}new
+                                    {% elif inquiry.status == 'read' %}available
+                                    {% else %}archived{% endif %}">
+                                    {{ inquiry.get_status_display }}
+                                </span>
+                            </td>
+
+                            <td class="inquiry-actions">
+
+                                <a href="{% url 'inquiry_detail' inquiry.pk %}"
+                                   class="btn-kusi-sm btn-kusi-view"
+                                   title="View inquiry">
+                                    View
+                                </a>
+
+                                {% if inquiry.is_unread %}
+                                <form method="POST" action="{% url 'mark_inquiry_read' inquiry.pk %}">
+                                    {% csrf_token %}
+                                    <input type="hidden" name="next" value="{{ request.get_full_path }}">
+                                    <button type="submit"
+                                            class="btn-kusi-sm btn-kusi-read"
+                                            title="Mark as read">
+                                        Mark Read
+                                    </button>
+                                </form>
+                                {% endif %}
+
+                                {% if inquiry.status == 'archived' %}
+                                <form method="POST" action="{% url 'unarchive_inquiry' inquiry.pk %}">
+                                    {% csrf_token %}
+                                    <button type="submit"
+                                            class="btn-kusi-sm btn-kusi-archive"
+                                            title="Restore from archive">
+                                        Restore
+                                    </button>
+                                </form>
+                                {% else %}
+                                <form method="POST" action="{% url 'archive_inquiry' inquiry.pk %}">
+                                    {% csrf_token %}
+                                    <button type="submit"
+                                            class="btn-kusi-sm btn-kusi-archive"
+                                            title="Archive inquiry">
+                                        Archive
+                                    </button>
+                                </form>
+                                {% endif %}
+
+                                <a href="{% url 'delete_inquiry' inquiry.pk %}"
+                                   class="btn-kusi-sm btn-kusi-delete"
+                                   title="Delete inquiry">
+                                    Delete
+                                </a>
+
+                            </td>
+
+                        </tr>
+
+                        {% empty %}
+
+                        <tr>
+                            <td colspan="7">
+                                <div class="empty-state">
+                                    <div class="empty-icon">📭</div>
+                                    <h5>No inquiries here</h5>
+                                    <p>
+                                        {% if active_filter == 'archived' %}
+                                            Nothing has been archived yet.
+                                        {% else %}
+                                            Quote requests from the website will appear here.
+                                        {% endif %}
+                                    </p>
+                                </div>
+                            </td>
+                        </tr>
+
+                        {% endfor %}
+
+                    </tbody>
+
+                </table>
+
+            </div>
+
+        </div>
+
+    </div> <!-- Close kusi-dashboard -->
+</div> <!-- Close kusi-wrapper -->
+
+{% endblock %}

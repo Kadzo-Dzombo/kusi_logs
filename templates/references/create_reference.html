@@ -1,0 +1,48 @@
+{% extends 'base.html' %}
+
+{% block content %}
+
+<div class="kusi-wrapper">
+
+    <div class="kusi-form-card">
+
+        <div class="section-label">Reference Management</div>
+        <h1 class="page-title">Create Reference</h1>
+
+        <div class="kusi-card">
+
+            <div class="kusi-card-header">
+                <h4>Reference Details</h4>
+            </div>
+
+            <div class="kusi-card-body">
+
+                <form method="POST">
+                    {% csrf_token %}
+
+                    {{ form.as_p }}
+
+                    <div class="form-actions">
+                        <button
+                            type="submit"
+                            class="btn-kusi btn-kusi-primary">
+                            Create Reference
+                        </button>
+
+                        <a
+                            href="{% url 'reference_list' %}"
+                            class="btn-kusi btn-kusi-secondary">
+                            Cancel
+                        </a>
+                    </div>
+
+                </form>
+
+            </div>
+        </div>
+
+    </div>
+
+</div>
+
+{% endblock %}

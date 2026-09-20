@@ -1,0 +1,113 @@
+{% extends 'base.html' %}
+
+{% block title %}
+Inquiry from {{ inquiry.full_name }}
+{% endblock %}
+
+
+{% block content %}
+
+<div class="kusi-wrapper">
+
+    <div class="kusi-detail-card">
+
+        <div class="section-label">Inquiry Detail</div>
+        <h1 class="page-title">{{ inquiry.full_name }}</h1>
+
+        <div class="kusi-card">
+
+            <div class="kusi-card-header">
+                <h4>Quote Request</h4>
+                <span class="status-dot
+                    {% if inquiry.status == 'new' %}new
+                    {% elif inquiry.status == 'read' %}available
+                    {% else %}archived{% endif %}">
+                    {{ inquiry.get_status_display }}
+                </span>
+            </div>
+
+            <div class="kusi-card-body">
+
+                <table>
+
+                    <tr>
+                        <th>Received</th>
+                        <td>{{ inquiry.created_at|date:"d M Y" }} at {{ inquiry.created_at|time:"H:i" }}</td>
+                    </tr>
+
+                    <tr>
+                        <th>Full Name</th>
+                        <td>{{ inquiry.full_name }}</td>
+                    </tr>
+
+                    <tr>
+                        <th>Email Address</th>
+                        <td><a href="mailto:{{ inquiry.email }}">{{ inquiry.email }}</a></td>
+                    </tr>
+
+                    <tr>
+                        <th>Container Type</th>
+                        <td><span class="size-tag">{{ inquiry.container_type|default:"-" }}</span></td>
+                    </tr>
+
+                    <tr>
+                        <th>Delivery Zip / Port</th>
+                        <td>{{ inquiry.delivery_location|default:"-" }}</td>
+                    </tr>
+
+                </table>
+
+                <div class="inquiry-notes">
+                    <span class="field-label">Additional Notes / Logistics Needs</span>
+                    <p>{{ inquiry.notes|linebreaksbr|default:"No additional notes provided." }}</p>
+                </div>
+
+
+                <div class="detail-actions">
+
+                    <a href="mailto:{{ inquiry.email }}?subject=Re: Your Kusi Logistics quote request"
+                       class="btn-kusi btn-kusi-primary">
+                        <i class="bi bi-reply-fill"></i>
+                        Reply by Email
+                    </a>
+
+                    {% if inquiry.status == 'archived' %}
+                    <form method="POST" action="{% url 'unarchive_inquiry' inquiry.pk %}">
+                        {% csrf_token %}
+                        <button type="submit" class="btn-kusi btn-kusi-secondary">
+                            Restore
+                        </button>
+                    </form>
+                    {% else %}
+                    <form method="POST" action="{% url 'archive_inquiry' inquiry.pk %}">
+                        {% csrf_token %}
+                        <button type="submit" class="btn-kusi btn-kusi-secondary">
+                            <i class="bi bi-archive"></i>
+                            Archive
+                        </button>
+                    </form>
+                    {% endif %}
+
+                    <a href="{% url 'delete_inquiry' inquiry.pk %}"
+                       class="btn-kusi btn-kusi-danger">
+                        <i class="bi bi-trash"></i>
+                        Delete
+                    </a>
+
+                </div>
+
+                <div style="margin-top:24px;">
+                    <a href="{% url 'inquiry_list' %}" class="btn-kusi btn-kusi-secondary">
+                        Back to Inquiries
+                    </a>
+                </div>
+
+            </div>
+
+        </div>
+
+    </div>
+
+</div>
+
+{% endblock %}

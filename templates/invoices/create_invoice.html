@@ -1,0 +1,469 @@
+{% extends 'base.html' %}
+
+{% block title %}
+Create Invoice
+{% endblock %}
+
+
+{% block content %}
+
+<div class="kusi-wrapper">
+    <div class="kusi-dashboard">
+
+        <!-- PAGE HEADING -->
+        <div class="section-label">Invoicing</div>
+        <div class="page-header" style="margin-top:16px;">
+            <div>
+                <div class="page-tag">New Document</div>
+                <h1 class="page-title">Create Invoice</h1>
+            </div>
+            <div class="page-desc">
+                Enter invoice and product details.
+            </div>
+        </div>
+
+
+        <form method="POST">
+
+            {% csrf_token %}
+
+
+            <!-- Invoice Information -->
+
+            <div class="kusi-card">
+
+                <div class="kusi-card-header">
+                    <h5 class="mb-0" style="font-family:'Barlow Condensed',sans-serif; font-weight:800; text-transform:uppercase; letter-spacing:0.5px; font-size:20px; margin:0;">
+                        Invoice Information
+                    </h5>
+                </div>
+
+
+                <div class="kusi-card-body">
+
+                    <div class="row g-3">
+
+                        <div class="col-md-4">
+                            <label class="form-label">Invoice No.</label>
+                            {{ invoice_form.invoice_no }}
+                        </div>
+
+                        <div class="col-md-4">
+                            <label class="form-label">Date</label>
+                            {{ invoice_form.date }}
+                        </div>
+
+                        <div class="col-md-4">
+                            <label class="form-label">Company Name</label>
+                            {{ invoice_form.company_name }}
+                        </div>
+
+                        <div class="col-md-6">
+                            <label class="form-label">Address</label>
+                            {{ invoice_form.address }}
+                        </div>
+
+                        <div class="col-md-3">
+                            <label class="form-label">Phone No.</label>
+                            {{ invoice_form.phone_no }}
+                        </div>
+
+                        <div class="col-md-3">
+                            <label class="form-label">Email Address</label>
+                            {{ invoice_form.email_address }}
+                        </div>
+
+                        <div class="col-md-6">
+                            <label class="form-label">Attention</label>
+                            {{ invoice_form.attention }}
+                        </div>
+
+                    </div>
+
+                </div>
+
+            </div>
+
+
+            <!-- Products -->
+
+            <div class="kusi-card">
+
+                <div class="kusi-card-header">
+
+                    <h5 style="font-family:'Barlow Condensed',sans-serif; font-weight:800; text-transform:uppercase; letter-spacing:0.5px; font-size:20px; margin:0;">
+                        Products
+                    </h5>
+
+                    <button
+                        type="button"
+                        id="add-item"
+                        class="btn-kusi btn-kusi-primary btn-kusi-sm"
+                    >
+                        <i class="bi bi-plus-lg"></i>
+                        Add Product
+                    </button>
+
+                </div>
+
+
+                <div class="kusi-card-body">
+
+                    {{ formset.management_form }}
+
+
+                    <div class="table-responsive">
+
+                        <table id="items-table">
+
+                            <thead>
+
+                                <tr>
+                                    <th style="min-width: 180px;">Ser No.</th>
+                                    <th style="min-width: 120px;">Quantity</th>
+                                    <th style="min-width: 160px;">Unit Price</th>
+                                    <th style="min-width: 160px;">Total Amount</th>
+                                    <th style="width: 80px;">Action</th>
+                                </tr>
+
+                            </thead>
+
+
+                            <tbody id="item-rows">
+
+                                {% for form in formset %}
+
+                                <tr class="item-row">
+
+                                    <td>{{ form.ser_no }}</td>
+                                    <td>{{ form.quantity }}</td>
+                                    <td>{{ form.unit_price }}</td>
+
+                                    <td>
+                                        <input
+                                            type="text"
+                                            class="item-total"
+                                            value="0.00"
+                                            readonly
+                                        >
+                                    </td>
+
+                                    <td>
+                                        <button
+                                            type="button"
+                                            class="btn-kusi-danger remove-item"
+                                        >
+                                            <i class="bi bi-trash"></i>
+                                        </button>
+                                    </td>
+
+                                </tr>
+
+                                {% endfor %}
+
+                            </tbody>
+
+
+                            <tfoot>
+
+                                <tr>
+                                    <th colspan="3" class="text-end">Grand Total</th>
+                                    <th>
+                                        <input
+                                            type="text"
+                                            id="grand-total-display"
+                                            value="0.00"
+                                            readonly
+                                        >
+                                    </th>
+                                    <th></th>
+                                </tr>
+
+                            </tfoot>
+
+                        </table>
+
+                    </div>
+
+                </div>
+
+            </div>
+
+
+            <!-- Additional Information -->
+
+            <div class="kusi-card">
+
+                <div class="kusi-card-header">
+                    <h5 style="font-family:'Barlow Condensed',sans-serif; font-weight:800; text-transform:uppercase; letter-spacing:0.5px; font-size:20px; margin:0;">
+                        Additional Information
+                    </h5>
+                </div>
+
+
+                <div class="kusi-card-body">
+
+                    <div class="row g-3">
+
+                        <div class="col-md-6">
+                            <label class="form-label">Amount in Words</label>
+                            {{ invoice_form.amount_in_words }}
+                        </div>
+
+                        <div class="col-md-3">
+                            <label class="form-label">Bill of Sale</label>
+                            {{ invoice_form.bill_of_sale }}
+                        </div>
+
+                        <div class="col-md-3">
+                            <label class="form-label">Delivery</label>
+                            {{ invoice_form.delivery }}
+                        </div>
+
+                        <div class="col-md-6">
+                            <label class="form-label">Authorised Signature</label>
+                            {{ invoice_form.authorised_signature }}
+                        </div>
+
+                        <div class="col-md-6">
+                            <label class="form-label">Buyer Signature</label>
+                            {{ invoice_form.buyer_signature }}
+                        </div>
+
+                        <div class="col-12">
+                            <label class="form-label">Buyer Acknowledgement</label>
+                            {{ invoice_form.buyer_acknowledgement }}
+                        </div>
+
+                    </div>
+
+                </div>
+
+            </div>
+
+
+            <!-- Buttons -->
+
+            <div class="mb-5" style="display:flex; gap:16px;">
+
+                <button
+                    type="submit"
+                    class="btn-kusi btn-kusi-primary"
+                >
+                    <i class="bi bi-save"></i>
+                    Save Invoice
+                </button>
+
+                <a
+                    href="{% url 'dashboard' %}"
+                    class="btn-kusi btn-kusi-secondary"
+                >
+                    Cancel
+                </a>
+
+            </div>
+
+        </form>
+
+    </div> <!-- Close kusi-dashboard -->
+</div> <!-- Close kusi-wrapper -->
+
+
+<script>
+
+document.addEventListener('DOMContentLoaded', function () {
+
+    const addButton = document.getElementById('add-item');
+    const itemRows = document.getElementById('item-rows');
+    const totalForms = document.getElementById(
+        'id_items-TOTAL_FORMS'
+    );
+
+    /*
+     * Calculate a single item total
+     */
+    function calculateItemTotal(row) {
+
+        const quantity = parseFloat(
+            row.querySelector(
+                'input[name$="-quantity"]'
+            ).value
+        ) || 0;
+
+        const unitPrice = parseFloat(
+            row.querySelector(
+                'input[name$="-unit_price"]'
+            ).value
+        ) || 0;
+
+        const total = quantity * unitPrice;
+
+        row.querySelector('.item-total').value =
+            total.toFixed(2);
+
+        calculateGrandTotal();
+    }
+
+
+    /*
+     * Calculate grand total
+     */
+    function calculateGrandTotal() {
+
+        let grandTotal = 0;
+
+        document
+            .querySelectorAll('.item-total')
+            .forEach(function (input) {
+
+                grandTotal += parseFloat(input.value) || 0;
+
+            });
+
+        document.getElementById(
+            'grand-total-display'
+        ).value = grandTotal.toFixed(2);
+    }
+
+
+    /*
+     * Calculate totals when quantity
+     * or price changes
+     */
+    document.addEventListener(
+        'input',
+        function (event) {
+
+            if (
+                event.target.name &&
+                (
+                    event.target.name.endsWith('-quantity') ||
+                    event.target.name.endsWith('-unit_price')
+                )
+            ) {
+
+                calculateItemTotal(
+                    event.target.closest('.item-row')
+                );
+
+            }
+
+        }
+    );
+
+
+    /*
+     * Remove item
+     */
+    document.addEventListener(
+        'click',
+        function (event) {
+
+            const button =
+                event.target.closest('.remove-item');
+
+            if (!button) {
+                return;
+            }
+
+            const row =
+                button.closest('.item-row');
+
+            const deleteInput =
+                row.querySelector(
+                    'input[name$="-DELETE"]'
+                );
+
+            if (deleteInput) {
+
+                deleteInput.value = 'on';
+                row.style.display = 'none';
+
+            } else {
+
+                row.remove();
+
+            }
+
+            calculateGrandTotal();
+
+        }
+    );
+
+
+    /*
+     * Add new product
+     */
+    addButton.addEventListener(
+        'click',
+        function () {
+
+            const formIndex =
+                parseInt(totalForms.value);
+
+            const firstRow =
+                document.querySelector('.item-row');
+
+            const newRow =
+                firstRow.cloneNode(true);
+
+
+            /*
+             * Replace form index
+             */
+            newRow.innerHTML =
+                newRow.innerHTML.replace(
+                    /-0-/g,
+                    '-' + formIndex + '-'
+                );
+
+
+            /*
+             * Clear values
+             */
+            newRow.querySelectorAll(
+                'input'
+            ).forEach(function (input) {
+
+                if (
+                    input.type !== 'hidden'
+                ) {
+                    input.value = '';
+                }
+
+            });
+
+
+            /*
+             * Reset total
+             */
+            newRow.querySelector(
+                '.item-total'
+            ).value = '0.00';
+
+
+            itemRows.appendChild(newRow);
+
+            totalForms.value =
+                formIndex + 1;
+
+        }
+    );
+
+
+    /*
+     * Initial calculation
+     */
+    document
+        .querySelectorAll('.item-row')
+        .forEach(function (row) {
+
+            calculateItemTotal(row);
+
+        });
+
+});
+
+</script>
+
+{% endblock %}

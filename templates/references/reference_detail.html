@@ -1,0 +1,157 @@
+{% extends 'base.html' %}
+
+{% block content %}
+
+<div class="kusi-wrapper">
+    <div class="kusi-dashboard">
+
+        <!-- REFERENCE SUMMARY -->
+        <div class="ref-summary">
+
+            <div>
+                <div class="page-tag">Reference Overview</div>
+                <h1>{{ reference.reference_no }}</h1>
+                <div class="yard-link">
+                    Yard:
+                    <a href="{% url 'yard_detail' reference.yard.slug %}">
+                        {{ reference.yard.name }}
+                    </a>
+                </div>
+            </div>
+
+            <div class="container-count">
+                <div class="num">{{ containers.count }}</div>
+                <div class="label">Total Containers</div>
+            </div>
+
+        </div>
+
+
+        <!-- CONTAINERS -->
+        <div class="list-header">
+            <div class="section-label" style="margin-bottom:0;">Containers</div>
+
+            <a
+                href="{% url 'create_container' %}"
+                class="btn-kusi btn-kusi-primary">
+                <i class="bi bi-plus-lg"></i>
+                Add Container
+            </a>
+        </div>
+
+        <div class="kusi-card">
+
+            <div class="table-responsive">
+
+                <table>
+
+                    <thead>
+                        <tr>
+                            <th>#</th>
+                            <th>Container No.</th>
+                            <th>Size</th>
+                            <th>Status</th>
+                            <th>Client</th>
+                            <th>Date</th>
+                            <th>Actions</th>
+                        </tr>
+                    </thead>
+
+                    <tbody>
+
+                        {% for container in containers %}
+
+                        <tr>
+
+                            <td>{{ forloop.counter }}</td>
+
+                            <td>
+                                <a href="{% url 'container_detail' container.slug %}" class="container-link">
+                                    {{ container.container_no }}
+                                </a>
+                            </td>
+
+                            <td>
+                                <span class="size-tag">{{ container.size|default:"-" }}</span>
+                            </td>
+
+                            <td>
+                                {% if container.status %}
+                                <span class="status-dot
+                                    {% if container.status == 'Available' %}available
+                                    {% elif container.status == 'Out of Yard' %}out
+                                    {% elif container.status == 'Reserved' %}reserved
+                                    {% else %}available{% endif %}">
+                                    {{ container.status }}
+                                </span>
+                                {% else %}
+                                    -
+                                {% endif %}
+                            </td>
+
+                            <td style="color:var(--gray)">
+                                {{ container.client_name|default:"-" }}
+                            </td>
+
+                            <td style="color:var(--gray)">
+                                {{ container.date|default:"-" }}
+                            </td>
+
+                            <td>
+
+                                <a
+                                    href="{% url 'container_detail' container.slug %}"
+                                    class="btn-kusi-sm btn-kusi-view">
+                                    View
+                                </a>
+
+                                <a
+                                    href="{% url 'delete_container' container.slug %}"
+                                    class="btn-kusi-sm btn-kusi-delete">
+                                    Delete
+                                </a>
+
+                            </td>
+
+                        </tr>
+
+                        {% empty %}
+
+                        <tr>
+                            <td colspan="7" class="empty-report">
+                                No containers have been added to this reference.
+                            </td>
+                        </tr>
+
+                        {% endfor %}
+
+                    </tbody>
+
+                </table>
+
+            </div>
+
+        </div>
+
+
+        <!-- BOTTOM ACTIONS -->
+        <div class="bottom-actions">
+
+            <a
+                href="{% url 'yard_detail' reference.yard.slug %}"
+                class="btn-kusi btn-kusi-secondary">
+                Back to Yard
+            </a>
+
+            <a
+                href="{% url 'delete_reference' reference.slug %}"
+                class="btn-kusi btn-kusi-danger">
+                Delete Reference
+            </a>
+
+        </div>
+
+    </div> <!-- Close kusi-dashboard -->
+</div> <!-- Close kusi-wrapper -->
+
+{% endblock %}

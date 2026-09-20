@@ -1,0 +1,109 @@
+{% extends 'base.html' %}
+
+{% block content %}
+
+<div class="kusi-wrapper">
+
+    <div class="kusi-detail-card">
+
+        <div class="section-label">Container Overview</div>
+        <h1 class="page-title">Container {{ container.container_no }}</h1>
+
+        <div class="kusi-card">
+
+            <div class="kusi-card-header">
+                <h4>Container Details</h4>
+            </div>
+
+            <div class="kusi-card-body">
+
+                <table>
+
+                    <tr>
+                        <th>Container Number</th>
+                        <td>{{ container.container_no }}</td>
+                    </tr>
+
+                    <tr>
+                        <th>Reference</th>
+                        <td>
+                            <a href="{% url 'reference_detail' container.reference.slug %}">
+                                {{ container.reference.reference_no }}
+                            </a>
+                        </td>
+                    </tr>
+
+                    <tr>
+                        <th>Yard</th>
+                        <td>
+                            <a href="{% url 'yard_detail' container.reference.yard.slug %}">
+                                {{ container.reference.yard.name }}
+                            </a>
+                        </td>
+                    </tr>
+
+                    <tr>
+                        <th>Size</th>
+                        <td><span class="size-tag">{{ container.size|default:"-" }}</span></td>
+                    </tr>
+
+                    <tr>
+                        <th>Status</th>
+                        <td>
+                            {% if container.status %}
+                            <span class="status-dot
+                                {% if container.status == 'Available' %}available
+                                {% elif container.status == 'Out of Yard' %}out
+                                {% elif container.status == 'Reserved' %}reserved
+                                {% else %}available{% endif %}">
+                                {{ container.status }}
+                            </span>
+                            {% else %}
+                                -
+                            {% endif %}
+                        </td>
+                    </tr>
+
+                    <tr>
+                        <th>Client Name</th>
+                        <td>{{ container.client_name|default:"-" }}</td>
+                    </tr>
+
+                    <tr>
+                        <th>Phone Number</th>
+                        <td>{{ container.phone_number|default:"-" }}</td>
+                    </tr>
+
+                    <tr>
+                        <th>Date</th>
+                        <td>{{ container.date|default:"-" }}</td>
+                    </tr>
+
+                </table>
+
+
+                <div class="detail-actions">
+
+                    <a
+                        href="{% url 'reference_detail' container.reference.slug %}"
+                        class="btn-kusi btn-kusi-secondary">
+                        Back to Reference
+                    </a>
+
+                    <a
+                        href="{% url 'delete_container' container.slug %}"
+                        class="btn-kusi btn-kusi-danger">
+                        Delete Container
+                    </a>
+
+                </div>
+
+            </div>
+
+        </div>
+
+    </div>
+
+</div>
+
+{% endblock %}

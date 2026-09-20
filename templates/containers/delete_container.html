@@ -1,0 +1,52 @@
+{% extends 'base.html' %}
+
+{% block content %}
+
+<div class="kusi-wrapper">
+
+    <div class="kusi-confirm-card">
+
+        <div class="section-label">Confirm Deletion</div>
+        <h1 class="page-title">Delete Container</h1>
+
+        <div class="kusi-card">
+
+            <div class="kusi-card-body">
+
+                <p class="confirm-text">
+                    Are you sure you want to delete container
+                    <strong>{{ container.container_no }}</strong>?
+                </p>
+
+                <form method="POST">
+
+                    {% csrf_token %}
+
+                    <div class="form-actions">
+
+                        <button
+                            type="submit"
+                            class="btn-kusi btn-kusi-danger">
+                            <i class="bi bi-trash"></i>
+                            Yes, Delete
+                        </button>
+
+                        <a
+                            href="{% url 'container_detail' container.slug %}"
+                            class="btn-kusi btn-kusi-secondary">
+                            Cancel
+                        </a>
+
+                    </div>
+
+                </form>
+
+            </div>
+
+        </div>
+
+    </div>
+
+</div>
+
+{% endblock %}

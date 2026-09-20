@@ -1,0 +1,62 @@
+{% extends 'base.html' %}
+
+{% block content %}
+
+<div class="kusi-wrapper">
+
+    <div class="kusi-confirm-card">
+
+        <div class="section-label">Confirm Deletion</div>
+        <h1 class="page-title">Delete Inquiry</h1>
+
+        <div class="kusi-card">
+
+            <div class="kusi-card-body">
+
+                <p class="confirm-text">
+                    Are you sure you want to delete the inquiry from
+                    <strong>{{ inquiry.full_name }}</strong>
+                    received on {{ inquiry.created_at|date:"d M Y" }}?
+                </p>
+
+                <div class="kusi-warning">
+                    <i class="bi bi-exclamation-triangle-fill"></i>
+                    <div>
+                        This permanently removes the customer's request and their
+                        contact details. If you only want it out of your list,
+                        archive it instead.
+                    </div>
+                </div>
+
+                <form method="POST">
+
+                    {% csrf_token %}
+
+                    <div class="form-actions">
+
+                        <button
+                            type="submit"
+                            class="btn-kusi btn-kusi-danger">
+                            <i class="bi bi-trash"></i>
+                            Yes, Delete
+                        </button>
+
+                        <a
+                            href="{% url 'inquiry_detail' inquiry.pk %}"
+                            class="btn-kusi btn-kusi-secondary">
+                            Cancel
+                        </a>
+
+                    </div>
+
+                </form>
+
+            </div>
+
+        </div>
+
+    </div>
+
+</div>
+
+{% endblock %}

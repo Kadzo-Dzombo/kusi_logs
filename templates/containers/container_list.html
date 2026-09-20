@@ -1,0 +1,133 @@
+{% extends 'base.html' %}
+
+{% block content %}
+
+<div class="kusi-wrapper">
+    <div class="kusi-dashboard">
+
+        <!-- PAGE HEADING -->
+        <div class="page-header">
+            <div>
+                <div class="page-tag">Container Management</div>
+                <h1 class="page-title">Containers</h1>
+            </div>
+
+            <a
+                href="{% url 'create_container' %}"
+                class="btn-kusi btn-kusi-primary">
+                <i class="bi bi-plus-lg"></i>
+                Add Container
+            </a>
+        </div>
+
+
+        <div class="section-label">All Containers</div>
+
+        <div class="kusi-card">
+
+            <div class="table-responsive">
+
+                <table>
+
+                    <thead>
+
+                        <tr>
+                            <th>#</th>
+                            <th>Container No.</th>
+                            <th>Reference</th>
+                            <th>Yard</th>
+                            <th>Size</th>
+                            <th>Status</th>
+                            <th>Client</th>
+                            <th>Actions</th>
+                        </tr>
+
+                    </thead>
+
+
+                    <tbody>
+
+                        {% for container in containers %}
+
+                        <tr>
+
+                            <td>{{ forloop.counter }}</td>
+
+                            <td>
+                                <a href="{% url 'container_detail' container.slug %}" class="container-link">
+                                    {{ container.container_no }}
+                                </a>
+                            </td>
+
+                            <td>
+                                <a href="{% url 'reference_detail' container.reference.slug %}" class="ref-link">
+                                    {{ container.reference.reference_no }}
+                                </a>
+                            </td>
+
+                            <td style="color:var(--gray)">
+                                {{ container.reference.yard.name }}
+                            </td>
+
+                            <td>
+                                <span class="size-tag">{{ container.size|default:"-" }}</span>
+                            </td>
+
+                            <td>
+                                {% if container.status %}
+                                <span class="status-dot
+                                    {% if container.status == 'Available' %}available
+                                    {% elif container.status == 'Out of Yard' %}out
+                                    {% elif container.status == 'Reserved' %}reserved
+                                    {% else %}available{% endif %}">
+                                    {{ container.status }}
+                                </span>
+                                {% else %}
+                                    -
+                                {% endif %}
+                            </td>
+
+                            <td style="color:var(--gray)">
+                                {{ container.client_name|default:"-" }}
+                            </td>
+
+                            <td>
+
+                                <a
+                                    href="{% url 'container_detail' container.slug %}"
+                                    class="btn-kusi-sm btn-kusi-view">
+                                    View
+                                </a>
+
+                                <a
+                                    href="{% url 'delete_container' container.slug %}"
+                                    class="btn-kusi-sm btn-kusi-delete">
+                                    Delete
+                                </a>
+
+                            </td>
+
+                        </tr>
+
+                        {% empty %}
+
+                        <tr>
+                            <td colspan="8" class="empty-report">
+                                No containers found.
+                            </td>
+                        </tr>
+
+                        {% endfor %}
+
+                    </tbody>
+
+                </table>
+
+            </div>
+
+        </div>
+
+    </div> <!-- Close kusi-dashboard -->
+</div> <!-- Close kusi-wrapper -->
+
+{% endblock %}
