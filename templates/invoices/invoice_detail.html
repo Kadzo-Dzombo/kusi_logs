@@ -124,8 +124,6 @@ Invoice {{ invoice.invoice_no }}
 <div class="kusi-wrapper">
     <div class="kusi-dashboard">
 
-        <img src="{% static 'images/invoice_letter_head.png' %}" alt="">
-
         <!-- PAGE HEADING -->
         <div class="page-header">
             <div>
@@ -150,8 +148,7 @@ Invoice {{ invoice.invoice_no }}
             <!-- Company header + invoice meta -->
             <div class="inv-top">
                 <div class="inv-company-header">
-                    <div class="inv-company-name">{{ invoice.seller_company_name|default:"Valentine Production" }}</div>
-                    <div class="inv-company-sub">{{ invoice.seller_address }} &nbsp;|&nbsp; {{ invoice.seller_email_address }} &nbsp;|&nbsp; {{ invoice.seller_phone_no }}</div>
+                    <img src="{% static 'img/invoice_letter_head.png' %}" alt="" style="width: 100%; height: auto; display: block;">
                 </div>
                 <div class="inv-meta">
                     <div class="inv-title-box">Proforma Invoice</div>
