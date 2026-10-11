@@ -3,6 +3,8 @@ import string
 from decimal import Decimal
 from django.db import models
 from django.shortcuts import reverse
+from django.utils import timezone
+from num2words import num2words
 from django.utils.text import slugify
 from django.db.models.signals import pre_save
 
@@ -95,10 +97,12 @@ class Invoice(models.Model):
 
     invoice_no = models.CharField(
         max_length=120,
-        unique=True
+        unique=True,
+        blank=True,
+        null=True
     )
 
-    date = models.DateField()
+    date = models.DateField(default=timezone.localdate)
 
     company_name = models.CharField(
         max_length=200
@@ -139,16 +143,74 @@ class Invoice(models.Model):
         default=Decimal('0.00')
     )
 
+    # bank details
+    account_name = models.CharField(
+        max_length=150,
+        blank=True,
+        null=True,
+        default='Valentine Production'
+    )
+
+    seller_company_name = models.CharField(
+        max_length=150,
+        blank=True,
+        null=True,
+        default='Valentine Production'
+    )
+
+    seller_address = models.CharField(
+        max_length=250,
+        blank=True,
+        null=True,
+        default='Mombasa, Kenya'
+    )
+
+    seller_phone_no = models.CharField(
+        max_length=50,
+        blank=True,
+        null=True,
+        default='+254 725 762 902'
+    )
+
+    seller_email_address = models.EmailField(
+        blank=True,
+        null=True,
+        default='amvalentineshiko@gmail.com'
+    )
+
+    usd_account_no = models.CharField(
+        max_length=50,
+        blank=True,
+        null=True,
+        default='1353543749'
+    )
+
+    kes_account_no = models.CharField(
+        max_length=50,
+        blank=True,
+        null=True,
+        default='1353543706'
+    )
+
+    kes_paybill_no = models.CharField(
+        max_length=50,
+        blank=True,
+        null=True,
+        default='522522'
+    )
+
     bill_of_sale = models.CharField(
         max_length=250,
         blank=True,
-        null=True
+        null=True,
+        default='This invoice shall constitute a Bill of Sale for the equipment described above between the buyer and Valentine Production as Seller. When Buyer has possession of the equipment, after completion of sale and equipment released from depot, Buyer shall remove at its own expense all logos, head marks, and any other identification of previous ownership, except for that appearing on the CSC Safety Approval plate, which according to CSC regulations should remain on the container and be restamped with the Buyers identification number in the area directly to the right of the container identification number. Seller hereby transfers all rights, title and interest in and to the equipment, free of any liens and encumbrances, as of this invoice subject to receipt of full payment of all charges levied by Seller. Such charges may include the sale price, bank charges, interest and administrative fees as applicable. Buyer is responsible for taxes, duty or other liabilities associated with the transfer of title or accruing to the equipment thereafter.'
     )
 
     delivery = models.CharField(
         max_length=250,
         blank=True,
-        null=True
+        null=True,
+        default='All containers subject to this invoice are sold sold as is, where is, for use in international trade.'
     )
 
     authorised_signature = models.CharField(
@@ -157,12 +219,7 @@ class Invoice(models.Model):
         null=True
     )
 
-    buyer_acknowledgement = models.TextField(
-        blank=True,
-        null=True
-    )
-
-    buyer_signature = models.CharField(
+    buyer_acknowledgement_and_signature = models.CharField(
         max_length=150,
         blank=True,
         null=True
@@ -176,8 +233,48 @@ class Invoice(models.Model):
         auto_now=True
     )
 
+    CURRENCY_CHOICES = [
+    ('KES', 'KES'),
+    ('USD', 'USD'),
+]
+
+    currency = models.CharField(
+        max_length=3,
+        choices=CURRENCY_CHOICES,
+        default='KES'
+    )
+
     def __str__(self):
         return self.invoice_no
+
+    def save(self, *args, **kwargs):
+
+        if not self.invoice_no:
+            last_invoice = Invoice.objects.order_by('-id').first()
+
+            if last_invoice:
+                self.invoice_no = str(
+                    int(last_invoice.invoice_no) + 1
+                ).zfill(4)
+            else:
+                self.invoice_no = '0001'
+
+        if self.grand_total is not None:
+            amount = num2words(
+                self.grand_total,
+                lang='en'
+            )
+
+            if self.currency == 'USD':
+                self.amount_in_words = (
+                    f"{amount.title()} US Dollars"
+                )
+            else:
+                self.amount_in_words = (
+                    f"{amount.title()} Kenya Shillings"
+                )
+
+        super().save(*args, **kwargs)
 
     def get_absolute_url(self):
         return reverse(
@@ -203,8 +300,15 @@ class InvoiceItem(models.Model):
         related_name='items'
     )
 
-    ser_no = models.CharField(
-        max_length=120
+    ser_no = models.PositiveIntegerField(
+        editable=False,
+        null=True
+    )
+
+    description = models.CharField(
+        max_length=250,
+        blank=True,
+        null=True
     )
 
     quantity = models.DecimalField(
@@ -223,10 +327,20 @@ class InvoiceItem(models.Model):
         default=Decimal('0.00')
     )
 
+    class Meta:
+        ordering = ['ser_no']
+
     def __str__(self):
-        return self.ser_no
+        return str(self.ser_no)
 
     def save(self, *args, **kwargs):
+
+        # Number items 1, 2, 3... within each invoice
+        if self.ser_no is None:
+            last = self.invoice.items.aggregate(
+                models.Max('ser_no')
+            )['ser_no__max']
+            self.ser_no = (last or 0) + 1
 
         self.total_amount = (
             self.quantity * self.unit_price

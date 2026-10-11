@@ -27,6 +27,15 @@ Create Invoice
 
             {% csrf_token %}
 
+            {% if invoice_form.errors or formset.errors or formset.non_form_errors %}
+                <div class="alert alert-danger">
+                    <strong>Please correct the following errors:</strong>
+
+                    {{ invoice_form.errors }}
+                    {{ formset.non_form_errors }}
+                    {{ formset.errors }}
+                </div>
+            {% endif %}
 
             <!-- Invoice Information -->
 
@@ -41,41 +50,37 @@ Create Invoice
 
                 <div class="kusi-card-body">
 
-                    <div class="row g-3">
-
-                        <div class="col-md-4">
-                            <label class="form-label">Invoice No.</label>
-                            {{ invoice_form.invoice_no }}
-                        </div>
-
-                        <div class="col-md-4">
-                            <label class="form-label">Date</label>
-                            {{ invoice_form.date }}
-                        </div>
+                    <div class="row g-3">  
+                        <p><strong>Date:</strong> {% now "d/m/Y" %}</p>              
 
                         <div class="col-md-4">
                             <label class="form-label">Company Name</label>
                             {{ invoice_form.company_name }}
                         </div>
 
-                        <div class="col-md-6">
+                        <div class="col-md-4">
                             <label class="form-label">Address</label>
                             {{ invoice_form.address }}
                         </div>
 
-                        <div class="col-md-3">
+                        <div class="col-md-4">
                             <label class="form-label">Phone No.</label>
                             {{ invoice_form.phone_no }}
                         </div>
 
-                        <div class="col-md-3">
+                        <div class="col-md-4">
                             <label class="form-label">Email Address</label>
                             {{ invoice_form.email_address }}
                         </div>
 
-                        <div class="col-md-6">
+                        <div class="col-md-4">
                             <label class="form-label">Attention</label>
                             {{ invoice_form.attention }}
+                        </div>
+
+                        <div class="col-md-4">
+                            <label class="form-label">Currency</label>
+                            {{ invoice_form.currency }}
                         </div>
 
                     </div>
@@ -120,6 +125,7 @@ Create Invoice
 
                                 <tr>
                                     <th style="min-width: 180px;">Ser No.</th>
+                                    <th style="min-width: 120px;">Description</th>
                                     <th style="min-width: 120px;">Quantity</th>
                                     <th style="min-width: 160px;">Unit Price</th>
                                     <th style="min-width: 160px;">Total Amount</th>
@@ -135,7 +141,8 @@ Create Invoice
 
                                 <tr class="item-row">
 
-                                    <td>{{ form.ser_no }}</td>
+                                    <td><span class="item-ser-no">{{ forloop.counter }}</span></td>
+                                    <td>{{ form.description }}</td>
                                     <td>{{ form.quantity }}</td>
                                     <td>{{ form.unit_price }}</td>
 
@@ -188,59 +195,7 @@ Create Invoice
                 </div>
 
             </div>
-
-
-            <!-- Additional Information -->
-
-            <div class="kusi-card">
-
-                <div class="kusi-card-header">
-                    <h5 style="font-family:'Barlow Condensed',sans-serif; font-weight:800; text-transform:uppercase; letter-spacing:0.5px; font-size:20px; margin:0;">
-                        Additional Information
-                    </h5>
-                </div>
-
-
-                <div class="kusi-card-body">
-
-                    <div class="row g-3">
-
-                        <div class="col-md-6">
-                            <label class="form-label">Amount in Words</label>
-                            {{ invoice_form.amount_in_words }}
-                        </div>
-
-                        <div class="col-md-3">
-                            <label class="form-label">Bill of Sale</label>
-                            {{ invoice_form.bill_of_sale }}
-                        </div>
-
-                        <div class="col-md-3">
-                            <label class="form-label">Delivery</label>
-                            {{ invoice_form.delivery }}
-                        </div>
-
-                        <div class="col-md-6">
-                            <label class="form-label">Authorised Signature</label>
-                            {{ invoice_form.authorised_signature }}
-                        </div>
-
-                        <div class="col-md-6">
-                            <label class="form-label">Buyer Signature</label>
-                            {{ invoice_form.buyer_signature }}
-                        </div>
-
-                        <div class="col-12">
-                            <label class="form-label">Buyer Acknowledgement</label>
-                            {{ invoice_form.buyer_acknowledgement }}
-                        </div>
-
-                    </div>
-
-                </div>
-
-            </div>
-
+            
 
             <!-- Buttons -->
 
@@ -327,6 +282,25 @@ document.addEventListener('DOMContentLoaded', function () {
 
 
     /*
+     * Number visible rows 1, 2, 3...
+     */
+    function renumberRows() {
+
+        let serNo = 1;
+
+        document
+            .querySelectorAll('.item-row')
+            .forEach(function (row) {
+
+                if (row.style.display !== 'none') {
+                    row.querySelector('.item-ser-no').textContent = serNo++;
+                }
+
+            });
+    }
+
+
+    /*
      * Calculate totals when quantity
      * or price changes
      */
@@ -385,6 +359,7 @@ document.addEventListener('DOMContentLoaded', function () {
 
             }
 
+            renumberRows();
             calculateGrandTotal();
 
         }
@@ -442,10 +417,14 @@ document.addEventListener('DOMContentLoaded', function () {
             ).value = '0.00';
 
 
+            newRow.style.display = '';
+
             itemRows.appendChild(newRow);
 
             totalForms.value =
                 formIndex + 1;
+
+            renumberRows();
 
         }
     );

@@ -1,6 +1,7 @@
 import csv
 from django.http import HttpResponse
 from django.http import request
+from django.utils import timezone
 from django.contrib import messages
 from django.db.models import Count, Q
 from django.views.decorators.http import require_POST
@@ -123,29 +124,6 @@ def logout_view(request):
     )
 
     return redirect('login')
-
-
-@login_required
-def dashboard(request): 
-    total_yards = Yard.objects.count() 
-    total_references = Reference.objects.count() 
-    total_containers = Container.objects.count() 
-    available_containers = Container.objects.filter( status='Available' ).count() 
-    reserved_containers = Container.objects.filter( status='Reserved' ).count() 
-    out_containers = Container.objects.filter( status='Out of Yard' ).count() 
-    recent_containers = Container.objects.select_related( 
-        'reference', 'reference__yard' ).order_by('-id')[:5] 
-    context = { 
-        'total_yards': total_yards, 
-        'total_references': total_references, 
-        'total_containers': total_containers, 
-        'available_containers': available_containers, 
-        'reserved_containers': reserved_containers, 
-        'out_containers': out_containers, 
-        'recent_containers': recent_containers, 
-    } 
-    print(total_yards, total_references, total_containers)
-    return render( request, 'dashboard.html', context )
 
 
 @login_required
@@ -322,12 +300,20 @@ def create_reference(request):
 
 
 def reference_list(request):
+    query = request.GET.get('q', '')
     references = Reference.objects.select_related('yard').all().order_by(
         'reference_no'
     )
 
+    if query:
+        references = references.filter(
+            Q(reference_no__icontains=query) |
+            Q(yard__name__icontains=query)
+        )
+
     context = {
-        'references': references
+        'references': references,
+        'query': query
     }
 
     return render(request, 'references/reference_list.html', context)
@@ -397,13 +383,24 @@ def create_container(request):
 
 
 def container_list(request):
+    query = request.GET.get('q', '')
     containers = Container.objects.select_related(
         'reference',
         'reference__yard'
     ).all().order_by('container_no')
 
+    if query:
+        containers = containers.filter(
+            Q(container_no__icontains=query) |
+            Q(client_name__icontains=query) |
+            Q(phone_number__icontains=query) |
+            Q(reference__reference_no__icontains=query) |
+            Q(reference__yard__name__icontains=query)
+        )
+
     context = {
-        'containers': containers
+        'containers': containers,
+        'query': query
     }
 
     return render(request, 'containers/container_list.html', context)
@@ -457,7 +454,8 @@ def create_invoice(request):
 
         if invoice_form.is_valid():
 
-            invoice = invoice_form.save()
+            invoice = invoice_form.save(commit=False)
+            invoice.date = timezone.localdate()
 
             formset = InvoiceItemFormSet(
                 request.POST,
@@ -466,9 +464,14 @@ def create_invoice(request):
 
             if formset.is_valid():
 
+                
+                invoice.save()
+
+                # Save invoice product rows
+                formset.instance = invoice
                 formset.save()
 
-                # Calculate grand total
+                # Calculate and save grand total
                 invoice.calculate_grand_total()
                 invoice.save()
 
@@ -482,18 +485,12 @@ def create_invoice(request):
                     pk=invoice.pk
                 )
 
-            # If the item formset is invalid,
-            # remove the partially created invoice
-            invoice.delete()
-
         else:
-
             formset = InvoiceItemFormSet(
                 request.POST
             )
 
     else:
-
         invoice_form = InvoiceForm()
         formset = InvoiceItemFormSet()
 
@@ -507,7 +504,6 @@ def create_invoice(request):
         'invoices/create_invoice.html',
         context
     )
-
 
 
 @login_required

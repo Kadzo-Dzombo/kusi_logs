@@ -219,13 +219,15 @@
     }
 </style>
 
+
+
 <div class="kusi-wrapper">
     <div class="kusi-dashboard">
 
         <!-- PAGE HEADING -->
         <div class="page-header">
             <div>
-                <div class="page-tag">Reference Management</div>
+                <div class="page-tag">Yard Management</div>
                 <h1 class="page-title">References</h1>
             </div>
 
@@ -237,86 +239,85 @@
             </a>
         </div>
 
+        <!-- SEARCH BAR -->
+        <div class="kusi-card" style="margin-bottom: 20px; padding: 16px;">
+            <form method="GET" action="{% url 'reference_list' %}" style="display: flex; gap: 10px;">
+                <input 
+                    type="text" 
+                    name="q" 
+                    value="{{ query }}" 
+                    placeholder="Search by reference number or yard name..." 
+                    class="form-control" 
+                    style="flex: 1; padding: 8px 12px; border: 1px solid var(--gray-light, #ccc); border-radius: 4px;"
+                >
+                <button type="submit" class="btn-kusi btn-kusi-primary">
+                    <i class="bi bi-search"> Search</i>
+                </button>
+                {% if query %}
+                    <a href="{% url 'reference_list' %}" class="btn-kusi" style="background: #e0e0e0; color: #333; text-decoration: none; display: flex; align-items: center; padding: 0 12px; border-radius: 4px;">
+                        Reset
+                    </a>
+                {% endif %}
+            </form>
+        </div>
 
-        <div class="section-label">All References</div>
+        <div class="section-label">Registered References</div>
 
         <div class="kusi-card">
-
             <div class="table-responsive">
-
                 <table>
-
                     <thead>
                         <tr>
                             <th>#</th>
-                            <th>Reference No.</th>
+                            <th>Reference No</th>
                             <th>Yard</th>
-                            <th>Containers</th>
                             <th>Actions</th>
                         </tr>
                     </thead>
-
                     <tbody>
-
-                        {% for reference in references %}
-
+                        {% for ref in references %}
                         <tr>
-
                             <td>{{ forloop.counter }}</td>
-
                             <td>
-                                <a href="{% url 'reference_detail' reference.slug %}" class="ref-link">
-                                    {{ reference.reference_no }}
+                                <a href="{{ ref.get_absolute_url }}" class="yard-link">
+                                    {{ ref.reference_no }}
                                 </a>
                             </td>
-
-                            <td>
-                                <a href="{% url 'yard_detail' reference.yard.slug %}" class="yard-link">
-                                    {{ reference.yard.name }}
-                                </a>
-                            </td>
-
                             <td style="color:var(--gray)">
-                                {{ reference.containers.count }}
+                                {{ ref.yard.name }}
                             </td>
-
                             <td>
-
                                 <a
-                                    href="{% url 'reference_detail' reference.slug %}"
+                                    href="{{ ref.get_absolute_url }}"
                                     class="btn-kusi-sm btn-kusi-view">
                                     View
                                 </a>
-
                                 <a
-                                    href="{% url 'delete_reference' reference.slug %}"
+                                    href="{% url 'delete_reference' ref.slug %}"
                                     class="btn-kusi-sm btn-kusi-delete">
                                     Delete
                                 </a>
-
                             </td>
-
                         </tr>
-
                         {% empty %}
-
                         <tr>
-                            <td colspan="5" class="empty-report">
-                                No references found.
+                            <td colspan="4" class="empty-report">
+                                {% if query %}
+                                    No references found matching "{{ query }}".
+                                {% else %}
+                                    No references have been created.
+                                {% endif %}
                             </td>
                         </tr>
-
                         {% endfor %}
-
                     </tbody>
-
                 </table>
-
             </div>
-
         </div>
 
     </div> <!-- Close kusi-dashboard -->
 </div> <!-- Close kusi-wrapper -->
+
+
 
 {% endblock %}

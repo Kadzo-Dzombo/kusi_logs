@@ -1,3 +1,6 @@
+from datetime import datetime
+from django.utils import timezone
+
 from django import forms
 
 from .models import Yard, Reference, Container, Invoice, InvoiceItem, Inquiry
@@ -221,36 +224,15 @@ class InvoiceForm(ModelForm):
         model = Invoice
 
         fields = [
-            'invoice_no',
-            'date',
             'company_name',
             'address',
             'phone_no',
             'email_address',
             'attention',
-            'amount_in_words',
-            'bill_of_sale',
-            'delivery',
-            'authorised_signature',
-            'buyer_acknowledgement',
-            'buyer_signature',
+            'currency',
         ]
 
         widgets = {
-
-            'invoice_no': TextInput(
-                attrs={
-                    'class': 'form-control',
-                    'placeholder': 'Enter invoice number'
-                }
-            ),
-
-            'date': DateInput(
-                attrs={
-                    'class': 'form-control',
-                    'type': 'date'
-                }
-            ),
 
             'company_name': TextInput(
                 attrs={
@@ -287,48 +269,12 @@ class InvoiceForm(ModelForm):
                 }
             ),
 
-            'amount_in_words': TextInput(
+            'currency': forms.Select(
                 attrs={
-                    'class': 'form-control',
-                    'placeholder': 'Amount in words'
+                    'class': 'form-control'
                 }
             ),
 
-            'bill_of_sale': TextInput(
-                attrs={
-                    'class': 'form-control',
-                    'placeholder': 'Bill of sale'
-                }
-            ),
-
-            'delivery': TextInput(
-                attrs={
-                    'class': 'form-control',
-                    'placeholder': 'Delivery details'
-                }
-            ),
-
-            'authorised_signature': TextInput(
-                attrs={
-                    'class': 'form-control',
-                    'placeholder': 'Authorised signature'
-                }
-            ),
-
-            'buyer_acknowledgement': forms.Textarea(
-                attrs={
-                    'class': 'form-control',
-                    'rows': 3,
-                    'placeholder': 'Buyer acknowledgement'
-                }
-            ),
-
-            'buyer_signature': TextInput(
-                attrs={
-                    'class': 'form-control',
-                    'placeholder': 'Buyer signature'
-                }
-            ),
         }
 
 
@@ -343,17 +289,17 @@ class InvoiceItemForm(ModelForm):
         model = InvoiceItem
 
         fields = [
-            'ser_no',
             'quantity',
             'unit_price',
+            'description'
         ]
 
         widgets = {
 
-            'ser_no': TextInput(
+            'description': TextInput(
                 attrs={
                     'class': 'form-control',
-                    'placeholder': 'Serial No.'
+                    'placeholder': 'Description'
                 }
             ),
 

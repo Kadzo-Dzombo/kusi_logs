@@ -20,6 +20,27 @@
             </a>
         </div>
 
+        <!-- SEARCH BAR -->
+        <div class="kusi-card" style="margin-bottom: 20px; padding: 16px;">
+            <form method="GET" action="{% url 'container_list' %}" style="display: flex; gap: 10px;">
+                <input 
+                    type="text" 
+                    name="q" 
+                    value="{{ query }}" 
+                    placeholder="Search by container no, client, reference, or yard..." 
+                    class="form-control" 
+                    style="flex: 1; padding: 8px 12px; border: 1px solid var(--gray-light, #ccc); border-radius: 4px;"
+                >
+                <button type="submit" class="btn-kusi btn-kusi-primary">
+                    <i class="bi bi-search"> Search</i>
+                </button>
+                {% if query %}
+                    <a href="{% url 'container_list' %}" class="btn-kusi" style="background: #e0e0e0; color: #333; text-decoration: none; display: flex; align-items: center; padding: 0 12px; border-radius: 4px;">
+                        Reset
+                    </a>
+                {% endif %}
+            </form>
+        </div>
 
         <div class="section-label">All Containers</div>
 
@@ -113,7 +134,11 @@
 
                         <tr>
                             <td colspan="8" class="empty-report">
-                                No containers found.
+                                {% if query %}
+                                    No containers found matching "{{ query }}".
+                                {% else %}
+                                    No containers found.
+                                {% endif %}
                             </td>
                         </tr>
 

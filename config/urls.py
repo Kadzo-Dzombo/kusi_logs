@@ -10,6 +10,7 @@ from .views import homepage
 urlpatterns = [
     path('', homepage, name='homepage'),
     path('', include('yard.urls')),
+    path('admin/', admin.site.urls),
 ]
 
 
