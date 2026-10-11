@@ -225,7 +225,7 @@ Invoice {{ invoice.invoice_no }}
                 <div class="total-box">
                     <div class="total-row grand-total">
                         <div class="total-label">Grand Total</div>
-                        <div class="total-val">{{ invoice.grand_total|floatformat:2 }}</div>
+                        <div class="total-val">{{ invoice.currency }} {{ invoice.grand_total|floatformat:2 }}</div>
                     </div>
                 </div>
             </div>
